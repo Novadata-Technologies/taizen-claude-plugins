@@ -181,6 +181,7 @@ taizen-claude-plugins/
 │   └── taizen-gtm-skills/
 │       ├── .claude-plugin/
 │       │   └── plugin.json       # Plugin metadata
+│       ├── .mcp.json             # MCP server integrations
 │       └── skills/
 │           │
 │           │── # Foundation
@@ -255,6 +256,7 @@ The skills are designed to work out of the box but become more powerful with you
 
 ```markdown
 ---
+name: skill-name
 description: Brief description of what this skill does
 ---
 
@@ -286,4 +288,4 @@ MIT License - see [LICENSE](LICENSE) for details.
 
 ---
 
-Built for GTM teams by [Taizen](https://taizen.ai)
+Built for GTM teams by [Taizen](https://usetaizen.com)
