@@ -4,7 +4,7 @@ A marketplace of Claude plugins for **sales**, **product marketing**, and **cust
 
 ## Overview
 
-This repository contains a Claude plugin marketplace with **30 comprehensive skills** for go-to-market teams. The skills are designed to work with Claude Code, Claude Desktop (via Cowork), and the Claude Plugins Marketplace.
+This repository contains a Claude plugin marketplace with **30+ comprehensive skills** for go-to-market teams. The skills work with Claude Cowork, Claude Code, and the Claude Plugins Marketplace.
 
 ## Installation
 
@@ -99,87 +99,77 @@ claude --plugin-dir ./plugins/taizen-gtm-skills
 
 ## Usage Examples
 
+Skills activate automatically based on your request. Just ask Claude naturally.
+
+> **Claude Code users**: You can also invoke skills directly with `/skill-name`
+
 ### Product Marketing
 
-```bash
-# Create foundational product context (do this first!)
-/taizen-gtm-skills:product-context
-
-# Develop positioning for a new product
-/taizen-gtm-skills:messaging-positioning positioning statement for [product]
-
-# Research a competitor
-/taizen-gtm-skills:competitive-intelligence battlecard [competitor name]
-
-# Plan a product launch
-/taizen-gtm-skills:go-to-market launch [product/feature]
-
-# Develop pricing strategy
-/taizen-gtm-skills:pricing-packaging strategy [product]
 ```
+"Help me create foundational product context for our platform"
+"Build a positioning statement for our analytics feature"
+"Create a battlecard comparing us to Competitor X"
+"Plan a go-to-market launch for our Q3 release"
+"Recommend a pricing strategy for our enterprise tier"
+```
+
+Claude Code: `/product-context`, `/messaging-positioning`, `/competitive-intelligence`, `/go-to-market`, `/pricing-packaging`
 
 ### Customer Marketing
 
-```bash
-# Create a customer case study
-/taizen-gtm-skills:case-study-builder [customer name]
-
-# Prep for case study interview
-/taizen-gtm-skills:case-study-builder interview-prep [customer]
-
-# Design customer advocacy program
-/taizen-gtm-skills:customer-advocacy program-design
-
-# Generate community signals digest
-/taizen-gtm-skills:community-signals digest [time period]
 ```
+"Create a case study for our Acme Corp implementation"
+"Design a customer advocacy and reference program"
+"Summarize community signals from the past month"
+"Write a customer newsletter for this quarter"
+```
+
+Claude Code: `/case-study-builder`, `/customer-advocacy`, `/community-signals`, `/newsletter-writer`
 
 ### Content Marketing
 
-```bash
-# Create SEO content brief
-/taizen-gtm-skills:seo-content brief [keyword/topic]
-
-# Write LinkedIn post
-/taizen-gtm-skills:social-content post linkedin [topic]
-
-# Create email nurture sequence
-/taizen-gtm-skills:email-sequences nurture [trigger/audience]
-
-# Write landing page copy
-/taizen-gtm-skills:copywriting landing-page [product/offer]
-
-# Review content before publishing
-/taizen-gtm-skills:content-reviewer [paste content]
 ```
+"Create an SEO content brief for 'sales automation tools'"
+"Write a LinkedIn post about our product update"
+"Design a nurture email sequence for trial signups"
+"Write landing page copy for our free trial"
+"Review this blog post for brand voice and quality"
+```
+
+Claude Code: `/seo-content`, `/social-content`, `/email-sequences`, `/copywriting`, `/content-reviewer`
 
 ### Sales Enablement
 
-```bash
-# Get deal strategy guidance
-/taizen-gtm-skills:sales-playbook deal-strategy [opportunity details]
-
-# Build ROI model for a deal
-/taizen-gtm-skills:roi-builder model [use case]
-
-# Research an account
-/taizen-gtm-skills:account-research discovery Acme Corp
-
-# Prepare for a discovery meeting
-/taizen-gtm-skills:discovery-prep Acme Corp CHRO meeting
-
-# Get buyer profile guidance
-/taizen-gtm-skills:buyer-profiles CHRO
-
-# Generate cold outreach
-/taizen-gtm-skills:outreach-templates cold Jane Smith, VP HR at Acme Corp
-
-# Prep for executive meeting
-/taizen-gtm-skills:executive-briefings meeting CFO at Acme Corp
-
-# Analyze a lost deal
-/taizen-gtm-skills:sales-coaching loss-analysis [deal details]
 ```
+"Give me deal strategy guidance for this enterprise opportunity"
+"Build an ROI model for reducing manual data entry"
+"Research Acme Corp before my discovery call"
+"Prep discovery questions for a meeting with their CHRO"
+"What should I know about selling to a CFO?"
+"Write a cold outreach sequence for Jane Smith, VP HR at Acme"
+"Prep me for an executive briefing with Acme's CEO"
+"Analyze why we lost the TechCorp deal"
+```
+
+Claude Code: `/sales-playbook`, `/roi-builder`, `/account-research`, `/discovery-prep`, `/buyer-profiles`, `/outreach-templates`, `/executive-briefings`, `/sales-coaching`
+
+## Scheduling with Taizen
+
+Automate recurring GTM tasks with [Taizen](https://usetaizen.com). Connect the Taizen MCP server and describe what you want to schedule in natural language:
+
+```
+"Every Monday morning, research my upcoming discovery calls and prep briefings"
+"At the start of each quarter, audit our content for messaging consistency"
+"When a new competitor is mentioned in Slack, create a competitive summary"
+"Weekly, summarize community signals and post to #product-marketing"
+```
+
+### How It Works
+
+1. **Sign up** at [usetaizen.com](https://usetaizen.com)
+2. **Connect** the Taizen MCP integration in your Claude settings
+3. **Describe** your automation in natural language
+4. **Taizen runs** your scheduled agents and delivers results to Slack, Google Drive, Notion, or other destinations
 
 ## Repository Structure
 
@@ -284,14 +274,6 @@ Contributions are welcome! Please:
 3. Make your changes
 4. Test with `claude --plugin-dir ./plugins/taizen-gtm-skills`
 5. Submit a pull request
-
-## Inspired By
-
-This plugin was inspired by excellent work in the community:
-- [pmalliance/product-marketing-skills](https://github.com/pmalliance/product-marketing-skills)
-- [coreyhaines31/marketingskills](https://github.com/coreyhaines31/marketingskills)
-- [timescale/marketing-skills](https://github.com/timescale/marketing-skills)
-- [alirezarezvani/claude-skills](https://github.com/alirezarezvani/claude-skills)
 
 ## License
 
