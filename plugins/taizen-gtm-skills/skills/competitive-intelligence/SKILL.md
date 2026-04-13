@@ -135,6 +135,64 @@ outputs:
 
 ---
 
+## Instructions for Claude
+
+> **IMPORTANT**: Before executing this skill, you MUST validate the configuration above.
+
+### Pre-Execution Checklist
+
+1. **Check for placeholder values**: Scan the YAML configuration for any `{{...}}` placeholders. These indicate required configuration that the user must provide.
+
+2. **Validate data sources**: For each data source with `enabled: true` or a `connector` field:
+   - Verify the corresponding MCP server is connected and available
+   - If a connector shows `{{OPTIONS}}`, ask the user which option they use
+   - If paths or URLs contain `{{PLACEHOLDER}}`, ask the user to provide the actual values
+
+3. **Validate competitor list**: The `competitors` section must have at least one competitor with actual values (not placeholders) before proceeding with competitive analysis.
+
+4. **Validate output destinations**: For any output type beyond `display`, verify:
+   - The connector is available as an MCP server
+   - The destination path/channel is configured (not a placeholder)
+
+### If Configuration is Incomplete
+
+**Do not proceed with the skill.** Instead:
+
+1. List the specific missing or placeholder values found
+2. Explain what each value is needed for
+3. Ask the user to provide the missing configuration
+4. Offer to help them set up the required MCP integrations
+
+**Example response when config is incomplete:**
+```
+I found some configuration that needs to be completed before I can run this skill:
+
+**Missing competitor information:**
+- COMPETITOR_1_NAME, COMPETITOR_1_URL (required for primary competitor analysis)
+
+**Unconfigured data sources:**
+- CRM connector: Which do you use - Salesforce or HubSpot?
+- Internal docs path: Where are your competitive intel docs stored?
+
+**Output destinations:**
+- Slack channel: What channel should I post competitive alerts to?
+
+Please provide these values, or let me know if you'd like to skip certain data sources for now.
+```
+
+### Minimum Requirements
+
+At minimum, this skill requires:
+- At least one competitor name (can use web search for public info)
+- `display` output enabled (always available)
+
+Enhanced functionality requires:
+- CRM connection for win/loss data
+- Call recording integration for competitive mentions
+- Internal docs access for existing battlecards
+
+---
+
 ## Scheduling & Automation with Taizen
 
 > **Automate this skill**: Schedule recurring competitive intelligence tasks with [Taizen](https://usetaizen.com). Create a free account to set up automated agents that run on your schedule.

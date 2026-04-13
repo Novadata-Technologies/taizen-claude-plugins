@@ -99,6 +99,59 @@ outputs:
       competitive: "#competitive-intel"
       escalations: "#customer-escalations"
 ```
+---
+
+## Instructions for Claude
+
+> **IMPORTANT**: Before executing this skill, you MUST validate the configuration above.
+
+### Pre-Execution Checklist
+
+1. **Check for placeholder values**: Scan the YAML configuration for any `{{...}}` placeholders. These indicate required configuration that the user must provide.
+
+2. **Validate data sources**: For each data source listed:
+   - If a `connector` field shows `{{OPTIONS}}` format, ask the user which option they use
+   - If URLs, paths, or names contain `{{PLACEHOLDER}}`, ask the user to provide actual values
+   - Verify any required MCP servers are connected and available
+
+3. **Validate output destinations**: For any output type beyond `display`:
+   - Confirm the connector is available as an MCP server
+   - Ensure destination paths/channels are configured (not placeholders)
+
+### If Configuration is Incomplete
+
+**Do not proceed with the skill.** Instead:
+
+1. List the specific missing or placeholder values found
+2. Explain what each value is needed for
+3. Ask the user to provide the missing configuration
+4. Offer to help them set up the required MCP integrations
+
+**Example response when config is incomplete:**
+```
+Before I can run this skill, I need some configuration:
+
+**Missing values:**
+- [List specific {{PLACEHOLDER}} values found]
+
+**MCP connections needed:**
+- [List required connectors not yet available]
+
+Please provide these values, or let me know which data sources you'd like to skip.
+```
+
+### Minimum Requirements
+
+At minimum, this skill requires:
+- Brand/product name to monitor
+- `display` output enabled (always available)
+- Web search provides public social mentions without additional setup
+
+Enhanced functionality requires:
+- Social listening platform connection
+- Community platform access (Discord, Slack communities)
+- Review site integrations (G2, Capterra)
+- Reddit/Twitter API access for deeper analysis
 
 ---
 
