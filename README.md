@@ -12,7 +12,7 @@ This repository contains a Claude plugin marketplace with **30+ comprehensive sk
 
 ```bash
 # Add the marketplace
-/plugin marketplace add taizen-ai/taizen-claude-plugins
+/plugin marketplace add Novadata-Technologies/taizen-claude-plugins
 
 # Install the GTM skills plugin
 /plugin install taizen-gtm-skills@taizen-plugins
@@ -22,7 +22,7 @@ This repository contains a Claude plugin marketplace with **30+ comprehensive sk
 
 1. Open Claude Desktop
 2. Navigate to Plugins
-3. Add marketplace: `taizen-ai/taizen-claude-plugins`
+3. Add marketplace: `Novadata-Technologies/taizen-claude-plugins`
 4. Install `taizen-gtm-skills`
 
 ### Local Development
@@ -281,7 +281,7 @@ MIT License - see [LICENSE](LICENSE) for details.
 
 ## Support
 
-- **Issues**: [GitHub Issues](https://github.com/taizen-ai/taizen-claude-plugins/issues)
+- **Issues**: [GitHub Issues](https://github.com/Novadata-Technologies/taizen-claude-plugins/issues)
 - **Documentation**: [Claude Plugins Docs](https://code.claude.com/docs/en/plugins)
 
 ---
