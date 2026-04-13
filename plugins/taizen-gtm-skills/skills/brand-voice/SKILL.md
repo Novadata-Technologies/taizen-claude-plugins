@@ -1,4 +1,5 @@
 ---
+name: brand-voice
 description: Creates content aligned with brand voice guidelines. Ensures consistency in tone, language, and personality across all communications.
 ---
 
@@ -9,6 +10,161 @@ Create and maintain consistent brand voice across all content.
 ## Purpose
 
 Ensure every piece of content sounds authentically like your brand, maintaining consistency across channels, authors, and content types.
+
+---
+
+## Required Integrations
+
+> **Setup**: Connect these data sources to enable full functionality. Claude will prompt you to connect any missing integrations when you use this skill.
+
+### Data Sources
+
+```yaml
+# BRAND VOICE DATA SOURCES
+# Configure the sources relevant to your brand management needs
+
+# Enterprise Search (searches across all internal sources)
+- source: enterprise_search
+  connector: "{{GLEAN | MOVEWORKS | ELASTIC}}"
+  data:
+    - internal_docs
+    - wiki_content
+    - shared_drives
+
+# Brand Guidelines & Assets
+- source: brand_docs
+  connector: "{{GOOGLE_DRIVE | SHAREPOINT | NOTION | CONFLUENCE}}"
+  paths:
+    - "/Marketing/Brand Guidelines/"
+    - "/Marketing/Voice and Tone/"
+    - "/Marketing/Messaging Framework/"
+    - "/Marketing/Editorial Style Guide/"
+    - "/Marketing/Do's and Don'ts/"
+
+# Content Library (for examples)
+- source: content_library
+  connector: "{{GOOGLE_DRIVE | SHAREPOINT | NOTION}}"
+  paths:
+    - "/Marketing/Published Content/"
+    - "/Marketing/Email Templates/"
+    - "/Marketing/Web Copy/"
+    - "/Marketing/Social Media/"
+
+# Content Performance
+- source: analytics
+  connector: "{{GOOGLE_ANALYTICS | HUBSPOT | MAILCHIMP}}"
+  data:
+    - content_engagement
+    - email_performance
+    - page_engagement
+
+# Customer Voice
+- source: customer_research
+  connector: "{{GOOGLE_DRIVE | SHAREPOINT | NOTION}}"
+  paths:
+    - "/Research/Voice of Customer/"
+    - "/Research/Customer Language/"
+```
+
+### Output Destinations
+
+```yaml
+# Where to deliver brand voice outputs
+outputs:
+  # Always available - display in Claude UI
+  - type: display
+    enabled: true
+
+  # Save to brand library
+  - type: documents
+    connector: "{{GOOGLE_DRIVE | SHAREPOINT | NOTION}}"
+    destination: "/Marketing/Brand Guidelines/"
+
+  # Notify for review
+  - type: slack
+    connector: "{{SLACK}}"
+    channel: "#brand-review"
+```
+
+---
+
+## Scheduling & Automation with Taizen
+
+> **Automate this skill**: Schedule recurring brand voice tasks with [Taizen](https://usetaizen.com). Create a free account to set up automated agents that run on your schedule.
+
+### How It Works
+
+The Taizen MCP server accepts natural language requests to schedule agents. Simply describe what you want to automate:
+
+```
+On the 1st of each month, audit our recently published content for brand voice
+consistency and identify any deviations or patterns. Alert me on Slack if there
+are any off-brand issues.
+```
+
+Taizen will:
+1. Read this skill's definition to understand the capabilities
+2. Create a recurring agent with your specified schedule
+3. Execute the task and deliver results to your configured destinations
+
+### Example Natural Language Requests
+
+**Monthly Brand Audit**:
+```
+On the 1st of each month, audit recently published content for brand voice
+consistency. Identify deviations and patterns, and share findings with
+#brand-review.
+```
+
+**Content Brand Check**:
+```
+Whenever new content is submitted for review, automatically check it for
+brand voice alignment and send feedback to the author via Slack DM.
+```
+
+**Quarterly Guide Refresh**:
+```
+At the start of each quarter, review our brand voice guide for relevance and
+update it with new examples from our high-performing content. Notify #marketing
+when complete.
+```
+
+### Setting Up Taizen Automation
+
+1. **Create Account**: Sign up at [usetaizen.com](https://usetaizen.com)
+2. **Connect MCP**: Add the Taizen MCP integration in your Claude settings and authenticate
+3. **Connect Content Sources**: Link your CMS and document storage
+4. **Schedule Agent**: Describe your automation in natural language
+5. **Taizen Reads Skill**: The agent receives this skill's full definition to understand what it can do
+
+### Technical Details
+
+When scheduling via Taizen MCP, Claude will:
+1. Read this SKILL.md file to get the full skill definition
+2. Call Taizen MCP with the skill content included
+
+| Parameter | Description | Example |
+|-----------|-------------|---------|
+| `task` | Natural language description of what to do | "Audit published content for brand voice consistency" |
+| `schedule` | When to run (cron or trigger) | "on the 1st of each month" or "when content submitted" |
+| `skill_content` | Object containing primary skill and referenced skills | See structure below |
+| `outputs` | Where to send results | "Slack #brand-review, Google Drive" |
+| `content_types` | Which content to focus on | "blog posts, landing pages, emails" |
+
+**skill_content structure:**
+```yaml
+skill_content:
+  primary:
+    name: "brand-voice"
+    content: "<full content of this SKILL.md>"
+  referenced:
+    - name: "product-context"
+      content: "<full content of product-context SKILL.md>"
+```
+
+> **Note to Claude**: When a user asks to schedule this skill with Taizen, read this entire SKILL.md file and pass it as `skill_content.primary`. Also read any referenced background skills (like `product-context`) and include them in `skill_content.referenced`.
+
+---
 
 ## Brand Voice Framework
 
@@ -68,6 +224,8 @@ Voice stays consistent, tone adapts to context:
 - CTAs: [Style guidance]
 - Lists: [Punctuation rules]
 
+---
+
 ## De-Slop Checklist
 
 Remove these weak patterns:
@@ -79,21 +237,44 @@ Remove these weak patterns:
 - [ ] Unnecessarily complex words
 - [ ] Hedging language (might, could, perhaps)
 
-## Usage
+---
 
-```
-/taizen-gtm-skills:brand-voice guide [create/review]
-/taizen-gtm-skills:brand-voice check [paste content]
-/taizen-gtm-skills:brand-voice rewrite [paste content]
-/taizen-gtm-skills:brand-voice adapt [content] for [channel]
-```
+## How to Use This Skill
+
+Invoke with natural language describing what you need:
+
+**Brand Voice Guide**
+- "Create a brand voice guide for our company"
+- "Document our tone and style guidelines"
+- "Build a writer's guide with dos and don'ts"
+
+**Content Review**
+- "Review this content for brand voice alignment: [paste]"
+- "Check if this email matches our brand guidelines"
+- "Is this landing page copy on-brand?"
+
+**Rewriting**
+- "Rewrite this in our brand voice: [paste]"
+- "Make this content more on-brand"
+- "Adapt this for our social media voice"
+
+**Channel Adaptation**
+- "Adapt this content for our support documentation"
+- "Rewrite this marketing copy for our executive audience"
+
+---
 
 ## Output Format
 
 ### Brand Voice Guide
 
-```
+```markdown
 # Brand Voice Guide: [Company Name]
+
+**Created**: [Date]
+**Data Sources Used**: [Brand docs, content library, etc.]
+
+---
 
 ## Our Voice
 
@@ -196,8 +377,13 @@ Remove these weak patterns:
 
 ### Content Review
 
-```
+```markdown
 # Brand Voice Review: [Content Title]
+
+**Created**: [Date]
+**Data Sources Used**: [Brand guidelines, etc.]
+
+---
 
 ## Overview
 - **Content Type**: [Type]
@@ -235,3 +421,14 @@ Remove these weak patterns:
 
 [Full revised content that's fully on-brand]
 ```
+
+---
+
+## Automation Options
+
+When configured with integrations, this skill can:
+
+1. **Content validation** - Automatically check submitted content for brand voice alignment
+2. **Style enforcement** - Flag off-brand language patterns before publishing
+3. **Consistency audits** - Regularly review published content for voice drift
+4. **Example library** - Build and maintain a library of on-brand examples from high-performing content

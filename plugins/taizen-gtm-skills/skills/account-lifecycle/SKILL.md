@@ -1,4 +1,5 @@
 ---
+name: account-lifecycle
 description: Supports post-close account management with structured account plans, renewal playbooks, and expansion strategies. Use for account planning and growth.
 ---
 
@@ -9,6 +10,233 @@ Strategic account management from onboarding through renewal and expansion.
 ## Purpose
 
 Maximize customer lifetime value through structured account planning, proactive renewal management, and strategic expansion.
+
+---
+
+## Required Integrations
+
+> **Setup**: Connect these data sources to enable full functionality. Claude will prompt you to connect any missing integrations when you use this skill.
+
+### Data Sources
+
+```yaml
+# ACCOUNT LIFECYCLE DATA SOURCES
+# Configure the sources relevant to your account management needs
+
+# Enterprise Search (searches across all internal sources)
+- source: enterprise_search
+  connector: "{{GLEAN | MOVEWORKS | ELASTIC}}"
+  data:
+    - internal_docs
+    - wiki_content
+    - shared_drives
+    - slack_history
+
+# CRM & Deal Data
+- source: crm
+  connector: "{{SALESFORCE | HUBSPOT}}"
+  data:
+    - account_records
+    - opportunity_history
+    - contract_data
+    - renewal_dates
+    - activity_timeline
+    - account_owner
+    - stakeholder_contacts
+
+# Customer Success Platforms
+- source: customer_success
+  connector: "{{GAINSIGHT | CHURNZERO | TOTANGO | VITALLY}}"
+  data:
+    - health_scores
+    - usage_metrics
+    - csm_notes
+    - success_plans
+    - risk_alerts
+    - nps_scores
+
+# Product Usage & Analytics
+- source: product_analytics
+  connector: "{{MIXPANEL | AMPLITUDE | PENDO | HEAP}}"
+  data:
+    - feature_adoption
+    - usage_trends
+    - active_users
+    - engagement_scores
+
+# Support & Tickets
+- source: support
+  connector: "{{ZENDESK | INTERCOM | FRESHDESK | SALESFORCE_SERVICE}}"
+  data:
+    - ticket_history
+    - resolution_times
+    - satisfaction_scores
+    - open_issues
+    - escalations
+
+# Call Recordings & Conversations
+- source: call_recordings
+  connector: "{{GONG | CHORUS | CLARI}}"
+  data:
+    - qbr_recordings
+    - check_in_calls
+    - sentiment_trends
+    - key_topics
+    - stakeholder_participation
+
+# Billing & Financials
+- source: billing
+  connector: "{{STRIPE | CHARGEBEE | ZUORA}}"
+  data:
+    - contract_value
+    - payment_history
+    - expansion_revenue
+    - churn_data
+
+# Internal Documentation
+- source: internal_docs
+  connector: "{{GOOGLE_DRIVE | SHAREPOINT | NOTION | CONFLUENCE}}"
+  paths:
+    - "/Customer Success/Account Plans/"
+    - "/Customer Success/QBR Materials/"
+    - "/Sales/Strategic Accounts/"
+
+# Communication History
+- source: email
+  connector: "{{GMAIL | OUTLOOK}}"
+  data:
+    - thread_history
+    - response_times
+    - engagement_patterns
+```
+
+### Output Destinations
+
+```yaml
+# Where to deliver account lifecycle outputs
+outputs:
+  # Always available - display in Claude UI
+  - type: display
+    enabled: true
+
+  # Update CRM with account plans and notes
+  - type: crm
+    connector: "{{SALESFORCE | HUBSPOT}}"
+    actions:
+      - update_account_plan_field
+      - add_renewal_tasks
+      - update_health_score
+      - log_activities
+
+  # Update customer success platform
+  - type: customer_success
+    connector: "{{GAINSIGHT | CHURNZERO | TOTANGO}}"
+    actions:
+      - update_success_plan
+      - create_ctas
+      - update_health_score
+
+  # Save account plans to docs
+  - type: documents
+    connector: "{{GOOGLE_DRIVE | SHAREPOINT | NOTION}}"
+    destination: "/Customer Success/Account Plans/"
+
+  # Alert team on risk signals
+  - type: slack
+    connector: "{{SLACK}}"
+    channels:
+      at_risk: "#cs-at-risk-accounts"
+      renewals: "#renewals-pipeline"
+      expansions: "#expansion-opportunities"
+```
+
+---
+
+## Scheduling & Automation with Taizen
+
+> **Automate this skill**: Schedule recurring account lifecycle tasks with [Taizen](https://usetaizen.com). Create a free account to set up automated agents that run on your schedule.
+
+### How It Works
+
+The Taizen MCP server accepts natural language requests to schedule agents. Simply describe what you want to automate:
+
+```
+Every Monday morning, review the health status of all accounts in my portfolio,
+identify at-risk accounts, and surface expansion opportunities. Post the
+summary to #cs-team.
+```
+
+Taizen will:
+1. Read this skill's definition to understand the capabilities
+2. Create a recurring agent with your specified schedule
+3. Execute the task and deliver results to your configured destinations
+
+### Example Natural Language Requests
+
+**Weekly Portfolio Health**:
+```
+Every Monday at 9am, review health status of all accounts in my portfolio,
+identify at-risk accounts, and surface expansion opportunities. Post to
+#cs-team and save to our Weekly Reviews folder.
+```
+
+**Renewal Milestone Alerts**:
+```
+Every morning at 8am, check for accounts reaching renewal milestones (T-180,
+T-90, T-60, T-30 days) and alert me on #renewals-pipeline. Also flag any
+accounts with health score drops or champion departures.
+```
+
+**Monthly Expansion Analysis**:
+```
+On the 1st of each month, analyze all accounts for expansion signals including
+usage spikes, new stakeholders, and whitespace opportunities. Post opportunities
+to #expansion-opportunities.
+```
+
+**Automated QBR Prep**:
+```
+Every Friday, check if any accounts have QBRs scheduled in the next 2 weeks
+and automatically generate QBR prep materials. Notify the account owner
+and save to our QBR Materials folder.
+```
+
+### Setting Up Taizen Automation
+
+1. **Create Account**: Sign up at [usetaizen.com](https://usetaizen.com)
+2. **Connect MCP**: Add the Taizen MCP integration in your Claude settings and authenticate
+3. **Connect CS Platform**: Link your Gainsight, ChurnZero, or Totango
+4. **Schedule Agent**: Describe your automation in natural language
+5. **Taizen Reads Skill**: The agent receives this skill's full definition to understand what it can do
+
+### Technical Details
+
+When scheduling via Taizen MCP, Claude will:
+1. Read this SKILL.md file to get the full skill definition
+2. Call Taizen MCP with the skill content included
+
+| Parameter | Description | Example |
+|-----------|-------------|---------|
+| `task` | Natural language description of what to do | "Review portfolio health and identify at-risk accounts" |
+| `schedule` | When to run (cron or trigger) | "every Monday at 9am" or "daily" |
+| `skill_content` | Object containing primary skill and referenced skills | See structure below |
+| `outputs` | Where to send results | "Slack #cs-team, Gainsight CTAs" |
+| `portfolio` | Which accounts to analyze | "my book of business" or "enterprise tier" |
+
+**skill_content structure:**
+```yaml
+skill_content:
+  primary:
+    name: "account-lifecycle"
+    content: "<full content of this SKILL.md>"
+  referenced:
+    - name: "product-context"
+      content: "<full content of product-context SKILL.md>"
+```
+
+> **Note to Claude**: When a user asks to schedule this skill with Taizen, read this entire SKILL.md file and pass it as `skill_content.primary`. Also read any referenced background skills (like `product-context`) and include them in `skill_content.referenced`.
+
+---
 
 ## Account Lifecycle Stages
 
@@ -36,7 +264,9 @@ Maximize customer lifetime value through structured account planning, proactive 
 - New stakeholder engagement
 - Strategic account development
 
-## Account Plan Template
+---
+
+## Account Plan Framework
 
 ### Account Overview
 - **Company**: Name, industry, size
@@ -69,6 +299,8 @@ Maximize customer lifetime value through structured account planning, proactive 
 - Owner assignments
 - Timeline and milestones
 
+---
+
 ## Renewal & Expansion Playbook
 
 ### Renewal Timeline
@@ -94,113 +326,224 @@ Maximize customer lifetime value through structured account planning, proactive 
 - Budget pressures
 - Strategic shift away from your category
 
-## Usage
+---
 
-Specify account and focus in `$ARGUMENTS`:
+## How to Use This Skill
 
-```
-/taizen-gtm-skills:account-lifecycle plan Acme Corp
-/taizen-gtm-skills:account-lifecycle renewal Acme Corp
-/taizen-gtm-skills:account-lifecycle expansion Acme Corp
-/taizen-gtm-skills:account-lifecycle health-check Acme Corp
-```
+Invoke with natural language describing what you need:
+
+**Account Planning**
+- "Create an account plan for Acme Corp"
+- "Help me build a strategic plan for our top 5 accounts"
+- "I need a 90-day action plan for the Nike account"
+- "What should my priorities be for TechCorp this quarter?"
+
+**Renewal Management**
+- "Build a renewal playbook for Acme Corp - renewal is in 90 days"
+- "What's the renewal risk assessment for my accounts renewing this quarter?"
+- "Help me prepare for the Stripe renewal conversation"
+- "Create a value summary for the TechCorp renewal"
+
+**Expansion Planning**
+- "What expansion opportunities exist at Acme Corp?"
+- "Analyze whitespace across my strategic accounts"
+- "Help me build an expansion strategy for Nike - they just acquired a new company"
+- "Which accounts have the highest expansion potential?"
+
+**Health Assessment**
+- "Give me a health check on all my accounts"
+- "Which accounts should I be worried about?"
+- "What are the risk signals across my portfolio?"
+- "Summarize the health trends for my top 10 accounts"
+
+**QBR Preparation**
+- "Help me prepare for the QBR with Acme Corp next week"
+- "Create a QBR deck outline for TechCorp"
+- "What value metrics should I highlight in the Nike QBR?"
+
+---
 
 ## Output Format
 
 ### Account Plan
-```
+
+```markdown
 ## Account Plan: [Company Name]
 
+**Created**: [Date]
+**Account Owner**: [Name]
+**Next Review**: [Date]
+**Data Sources Used**: [CRM, Gainsight, Gong, etc.]
+
+---
+
 ### Account Overview
+
 | Attribute | Value |
 |-----------|-------|
 | Industry | [Industry] |
 | Employees | [Count] |
 | ARR | [Value] |
+| Contract Start | [Date] |
 | Contract End | [Date] |
-| Health Score | [Score/Status] |
+| Health Score | [Score/Status] from [Source] |
 | Account Tier | [Tier] |
+| CSM | [Name] |
+| Sales Owner | [Name] |
 
 ### Executive Summary
-[2-3 sentence overview of account status and priorities]
+
+[2-3 sentence overview of account status, key wins, and priorities]
 
 ### Success Metrics
-| Metric | Target | Actual | Status |
-|--------|--------|--------|--------|
-| [Metric] | [Target] | [Actual] | [Status] |
+
+| Metric | Target | Actual | Status | Source |
+|--------|--------|--------|--------|--------|
+| [Metric] | [Target] | [Actual] | [🟢/🟡/🔴] | [Where data came from] |
+
+### Product Adoption
+
+*From product analytics:*
+- **Active Users**: [Count] / [Licensed]
+- **Feature Adoption**: [Key features and usage]
+- **Usage Trend**: [Increasing/Stable/Declining]
+- **Last Login**: [Key stakeholder activity]
 
 ### Stakeholder Map
-| Name | Role | Relationship | Priority Actions |
-|------|------|--------------|------------------|
-| [Name] | [Role] | [Strong/Medium/Weak] | [Action] |
+
+| Name | Role | Relationship | Last Contact | Priority Actions |
+|------|------|--------------|--------------|------------------|
+| [Name] | [Role] | [Strong/Medium/Weak] | [Date] | [Action] |
+
+### Relationship Coverage
+
+- **Executive Sponsor**: [Name or GAP]
+- **Champion**: [Name] - Strength: [Strong/Medium/Weak]
+- **Day-to-Day Contact**: [Name]
+- **Coverage Gaps**: [Roles we need to engage]
 
 ### Strategic Objectives (12 months)
-1. [Objective 1]: [Key results]
-2. [Objective 2]: [Key results]
-3. [Objective 3]: [Key results]
+
+1. **[Objective 1]**: [Key results]
+2. **[Objective 2]**: [Key results]
+3. **[Objective 3]**: [Key results]
 
 ### 90-Day Priorities
+
 | Priority | Owner | Due Date | Status |
 |----------|-------|----------|--------|
 | [Priority] | [Owner] | [Date] | [Status] |
 
 ### Risks & Mitigation
-| Risk | Likelihood | Impact | Mitigation |
-|------|------------|--------|------------|
-| [Risk] | [H/M/L] | [H/M/L] | [Action] |
+
+| Risk | Evidence | Likelihood | Impact | Mitigation |
+|------|----------|------------|--------|------------|
+| [Risk] | [Data point] | [H/M/L] | [H/M/L] | [Action] |
 
 ### Expansion Opportunities
-| Opportunity | Value | Timeline | Next Step |
-|-------------|-------|----------|-----------|
-| [Opportunity] | [Value] | [Timeline] | [Action] |
 
-### Key Meetings & Touchpoints
-| Meeting | Frequency | Attendees | Purpose |
-|---------|-----------|-----------|---------|
-| [Meeting] | [Frequency] | [Who] | [Purpose] |
+| Opportunity | Value | Timeline | Confidence | Next Step |
+|-------------|-------|----------|------------|-----------|
+| [Opportunity] | [Value] | [Timeline] | [H/M/L] | [Action] |
+
+### Recent Activity Summary
+
+*From CRM, Gong, and support:*
+- [Date]: [Activity]
+- [Date]: [Activity]
+- [Date]: [Activity]
+
+### Support Health
+
+- **Open Tickets**: [Count]
+- **CSAT Score**: [Score]
+- **Recent Escalations**: [Any?]
 ```
 
 ### Renewal Playbook
-```
+
+```markdown
 ## Renewal Playbook: [Company Name]
 
-### Renewal Overview
-- **Renewal Date**: [Date]
-- **Current ARR**: [Value]
-- **Target Outcome**: [Renewal + expansion / Flat renewal / At-risk]
-- **Days to Renewal**: [Days]
+**Renewal Date**: [Date]
+**Days to Renewal**: [Days]
+**Current ARR**: [Value]
+**Target Outcome**: [Renewal + expansion / Flat renewal / At-risk]
+
+---
 
 ### Renewal Health Assessment
-| Factor | Status | Notes |
-|--------|--------|-------|
-| Product Adoption | [Green/Yellow/Red] | [Details] |
-| Stakeholder Relationships | [Green/Yellow/Red] | [Details] |
-| Value Delivered | [Green/Yellow/Red] | [Details] |
-| Competitive Threat | [Green/Yellow/Red] | [Details] |
-| Budget/Priority | [Green/Yellow/Red] | [Details] |
+
+*Based on data from [Sources used]:*
+
+| Factor | Status | Evidence |
+|--------|--------|----------|
+| Product Adoption | [🟢/🟡/🔴] | [Usage metrics from product analytics] |
+| Stakeholder Relationships | [🟢/🟡/🔴] | [Engagement data from CRM/Gong] |
+| Value Delivered | [🟢/🟡/🔴] | [ROI metrics, success milestones] |
+| Support Sentiment | [🟢/🟡/🔴] | [CSAT, ticket trends] |
+| Competitive Threat | [🟢/🟡/🔴] | [Any competitive mentions in calls] |
+| Champion Strength | [🟢/🟡/🔴] | [Champion engagement level] |
+
+### Overall Renewal Risk: [Low/Medium/High]
 
 ### Value Story
-[Summary of value delivered, ROI achieved, strategic impact]
+
+*Compiled from success metrics and customer data:*
+
+**Business Impact Delivered**:
+- [Metric 1]: [Value achieved]
+- [Metric 2]: [Value achieved]
+
+**ROI Summary**: [Calculated ROI or value delivered]
+
+**Customer Quotes**:
+- "[Quote from QBR or call recording]" - [Name, Title]
 
 ### Renewal Strategy
-- **Approach**: [Strategy]
+
+- **Approach**: [Strategy based on health assessment]
 - **Key Messages**: [What to emphasize]
-- **Expansion Angle**: [If applicable]
-- **Risk Mitigation**: [How to address concerns]
+- **Expansion Angle**: [If applicable - specific opportunity]
+- **Risk Mitigation**: [How to address identified concerns]
 
 ### Stakeholder Engagement Plan
-| Stakeholder | Role in Renewal | Engagement Plan |
-|-------------|-----------------|-----------------|
-| [Name] | [Role] | [Plan] |
+
+| Stakeholder | Role in Renewal | Sentiment | Engagement Plan |
+|-------------|-----------------|-----------|-----------------|
+| [Name] | [Decision maker/Influencer/User] | [From Gong sentiment] | [Specific plan] |
 
 ### Timeline & Actions
+
 | Date | Action | Owner | Status |
 |------|--------|-------|--------|
-| [Date] | [Action] | [Owner] | [Status] |
+| T-90 | [Action] | [Owner] | [Status] |
+| T-60 | [Action] | [Owner] | [Status] |
+| T-30 | [Action] | [Owner] | [Status] |
 
 ### Negotiation Prep
-- **Expected Asks**: [What they'll request]
+
+- **Expected Asks**: [Based on past conversations]
 - **Our Position**: [How we'll respond]
+- **Expansion Opportunity**: [Value and pitch]
 - **Walk-Away Point**: [Minimum acceptable terms]
-- **BATNA**: [Our alternative if no deal]
+
+### Competitive Intelligence
+
+*From call recordings and CRM:*
+- **Competitors Mentioned**: [Any?]
+- **Competitive Concerns**: [What they've said]
+- **Our Response**: [How to address]
 ```
+
+---
+
+## Automation Options
+
+When configured with integrations, this skill can:
+
+1. **Renewal alerts** - Automatically notify CSM and sales when accounts hit renewal milestones (T-180, T-90, etc.)
+2. **Risk detection** - Alert on declining health scores, usage drops, or negative sentiment in calls
+3. **Expansion signals** - Notify when accounts show expansion triggers (usage spikes, new stakeholders, etc.)
+4. **QBR prep** - Auto-generate QBR materials before scheduled reviews
+5. **Weekly portfolio digest** - Summarize account health and actions across your book of business

@@ -1,6 +1,7 @@
 ---
+name: session-context
 description: Establishes user role and team context at session start to personalize outputs. Runs silently without producing visible output.
-disable-model-invocation: false
+user-invocable: false
 ---
 
 # Session Context Skill
@@ -10,6 +11,68 @@ Automatically gather context about the current user to personalize all subsequen
 ## Purpose
 
 Identify the current user and gather context about their role, team, and responsibilities to personalize all subsequent interactions and outputs.
+
+> **Note**: This is a **background skill** that runs automatically when other skills need user context. It does not produce visible output and is not meant to be invoked directly by users.
+
+---
+
+## Skills That Reference This Context
+
+The following skills automatically use session-context to personalize their outputs:
+
+- `account-research` - Adapts account briefs to user's role
+- `discovery-prep` - Tailors prep materials to sales methodology
+- `sales-coaching` - Personalizes coaching to rep's experience level
+- `executive-briefings` - Adjusts detail level based on seniority
+- `buyer-profiles` - Emphasizes relevant personas for user's deals
+- `competitive-intelligence` - Focuses on relevant competitive scenarios
+- `email-sequences` - Adjusts tone for user's communication style
+- `outreach-templates` - Personalizes based on user's territory/focus
+
+## Related Background Skills
+
+- `product-context` - Provides product positioning and messaging that this skill uses alongside user context
+- `feedback-collector` - Captures corrections to improve personalization accuracy
+
+---
+
+## Required Integrations
+
+> **Setup**: Connect these data sources to enable user context identification.
+
+### Data Sources
+
+```yaml
+# SESSION CONTEXT DATA SOURCES
+# Configure the sources for user identification
+
+# Enterprise Search (searches across all internal sources)
+- source: enterprise_search
+  connector: "{{GLEAN | MOVEWORKS | ELASTIC}}"
+  data:
+    - people_directory
+    - org_charts
+    - team_membership
+
+# HR / Directory
+- source: hr_system
+  connector: "{{WORKDAY | BAMBOOHR | RIPPLING}}"
+  data:
+    - employee_profiles
+    - job_titles
+    - departments
+    - managers
+
+# CRM (for sales user context)
+- source: crm
+  connector: "{{SALESFORCE | HUBSPOT}}"
+  data:
+    - user_records
+    - territory_assignments
+    - quota_data
+```
+
+---
 
 ## Workflow
 
@@ -41,3 +104,31 @@ This skill is **silent** - it does not produce visible output to the user. Inste
 When context is successfully gathered, proceed with the user's original request using the established context.
 
 If unable to determine user context, proceed with reasonable defaults for a GTM professional.
+
+---
+
+## Role-Based Personalization
+
+### Sales Roles
+- Focus on deal-related outputs
+- Include CRM integration
+- Emphasize competitive intelligence
+- Prioritize meeting prep and follow-ups
+
+### Marketing Roles
+- Focus on content and campaign outputs
+- Include analytics integration
+- Emphasize messaging consistency
+- Prioritize content calendar and performance
+
+### Customer Success Roles
+- Focus on customer health and expansion
+- Include CS platform integration
+- Emphasize retention metrics
+- Prioritize renewal and upsell prep
+
+### Leadership Roles
+- Focus on strategic summaries
+- Include cross-functional data
+- Emphasize business impact
+- Prioritize executive-ready outputs

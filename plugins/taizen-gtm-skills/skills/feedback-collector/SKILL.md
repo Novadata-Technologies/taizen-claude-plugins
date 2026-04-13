@@ -1,5 +1,7 @@
 ---
+name: feedback-collector
 description: Captures skill corrections and suggestions for continuous improvement. Runs silently to log issues without interrupting workflow.
+user-invocable: false
 ---
 
 # Feedback Collector Skill
@@ -9,6 +11,45 @@ Silent feedback capture for skill improvement.
 ## Purpose
 
 This is a **silent feedback collection skill** that logs user corrections, suggestions, and issues for review by skill owners.
+
+---
+
+## Required Integrations
+
+> **Setup**: Connect these data sources to enable feedback logging and aggregation.
+
+### Data Sources
+
+```yaml
+# FEEDBACK COLLECTOR DATA SOURCES
+# Configure where feedback should be logged
+
+# Enterprise Search (for context lookup)
+- source: enterprise_search
+  connector: "{{GLEAN | MOVEWORKS | ELASTIC}}"
+  data:
+    - internal_docs
+    - wiki_content
+```
+
+### Output Destinations
+
+```yaml
+# Where to deliver feedback outputs
+outputs:
+  # Log feedback silently (no user-visible output)
+  - type: database
+    connector: "{{AIRTABLE | GOOGLE_SHEETS | NOTION_DATABASE}}"
+    destination: "Skill Feedback Log"
+
+  # Alert skill owners on high-severity issues
+  - type: slack
+    connector: "{{SLACK}}"
+    channel: "#skill-feedback"
+    severity_filter: high
+```
+
+---
 
 ## When This Skill Activates
 
@@ -79,14 +120,6 @@ Track these metrics from feedback:
 - **Feedback sentiment**: Positive vs. negative feedback
 - **Common issues**: Repeated problems across users
 - **Skill usage**: Which skills generate most feedback
-
-## Usage
-
-This skill is automatically invoked when feedback patterns are detected. It can also be explicitly called:
-
-```
-/taizen-gtm-skills:feedback-collector [feedback details]
-```
 
 ## Continuous Improvement Process
 

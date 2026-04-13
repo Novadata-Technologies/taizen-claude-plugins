@@ -1,4 +1,5 @@
 ---
+name: email-sequences
 description: Designs email nurture sequences, drip campaigns, and automated email flows. Use for lead nurturing, onboarding, and lifecycle marketing.
 ---
 
@@ -9,6 +10,203 @@ Design automated email sequences that nurture leads and customers through their 
 ## Purpose
 
 Create strategic email sequences that move subscribers toward desired actions while building relationship and trust.
+
+---
+
+## Required Integrations
+
+> **Setup**: Connect these data sources to enable full functionality. Claude will prompt you to connect any missing integrations when you use this skill.
+
+### Data Sources
+
+```yaml
+# EMAIL SEQUENCE DATA SOURCES
+# Configure the sources relevant to your email marketing
+
+# Enterprise Search (searches across all internal sources)
+- source: enterprise_search
+  connector: "{{GLEAN | MOVEWORKS | ELASTIC}}"
+  data:
+    - internal_docs
+    - wiki_content
+    - shared_drives
+
+# Email Platform & Performance Data
+- source: email_platform
+  connector: "{{HUBSPOT | MARKETO | KLAVIYO | MAILCHIMP | ACTIVECAMPAIGN | CUSTOMER_IO}}"
+  data:
+    - existing_sequences
+    - email_performance
+    - open_rates
+    - click_rates
+    - conversion_rates
+    - unsubscribe_rates
+    - a_b_test_results
+    - segment_performance
+
+# CRM & Contact Data
+- source: crm
+  connector: "{{SALESFORCE | HUBSPOT}}"
+  data:
+    - lead_stages
+    - lifecycle_stages
+    - contact_properties
+    - deal_data
+    - conversion_paths
+
+# Website & Conversion Data
+- source: analytics
+  connector: "{{GOOGLE_ANALYTICS | MIXPANEL | AMPLITUDE}}"
+  data:
+    - conversion_funnels
+    - landing_page_performance
+    - email_to_conversion_paths
+
+# Content Assets
+- source: content_library
+  connector: "{{GOOGLE_DRIVE | SHAREPOINT | NOTION}}"
+  paths:
+    - "/Marketing/Email Templates/"
+    - "/Marketing/Content Library/"
+    - "/Marketing/Case Studies/"
+- source: sales_content
+  connector: "{{SEISMIC | HIGHSPOT | SHOWPAD}}"
+  data:
+    - email_templates
+    - case_studies
+    - one_pagers
+
+# Brand & Messaging
+- source: brand_docs
+  connector: "{{GOOGLE_DRIVE | SHAREPOINT | NOTION}}"
+  paths:
+    - "/Marketing/Brand Guidelines/"
+    - "/Marketing/Messaging/"
+    - "/Marketing/Voice and Tone/"
+
+# Product Information
+- source: product_docs
+  connector: "{{GOOGLE_DRIVE | SHAREPOINT | NOTION | CONFLUENCE}}"
+  paths:
+    - "/Product/Feature Documentation/"
+    - "/Product/Release Notes/"
+```
+
+### Output Destinations
+
+```yaml
+# Where to deliver email sequence outputs
+outputs:
+  # Always available - display in Claude UI (copy/paste)
+  - type: display
+    enabled: true
+
+  # Push directly to email platform
+  - type: email_platform
+    connector: "{{HUBSPOT | MARKETO | KLAVIYO | MAILCHIMP}}"
+    actions:
+      - create_sequence_draft
+      - create_email_drafts
+      - update_existing_sequence
+
+  # Save to content library
+  - type: documents
+    connector: "{{GOOGLE_DRIVE | SHAREPOINT | NOTION}}"
+    destination: "/Marketing/Email Sequences/"
+
+  # Notify team for review
+  - type: slack
+    connector: "{{SLACK}}"
+    channel: "#marketing-content"
+```
+
+---
+
+## Scheduling & Automation with Taizen
+
+> **Automate this skill**: Schedule recurring email sequence tasks with [Taizen](https://usetaizen.com). Create a free account to set up automated agents that run on your schedule.
+
+### How It Works
+
+The Taizen MCP server accepts natural language requests to schedule agents. Simply describe what you want to automate:
+
+```
+Every Monday morning, analyze our email sequence performance from the past week,
+identify underperforming emails, and suggest improvements. Send the report to
+#marketing-content on Slack.
+```
+
+Taizen will:
+1. Read this skill's definition to understand the capabilities
+2. Create a recurring agent with your specified schedule
+3. Execute the task and deliver results to your configured destinations
+
+### Example Natural Language Requests
+
+**Weekly Performance Review**:
+```
+Every Monday at 9am, analyze email sequence performance from the past week,
+identify emails with below-average open or click rates, and suggest subject
+line and content improvements. Post findings to #marketing-content.
+```
+
+**Monthly A/B Test Analysis**:
+```
+On the 1st of each month, review all A/B test results from the past month,
+document what we learned about subject lines and CTAs, and update our email
+best practices doc in Notion.
+```
+
+**Quarterly Sequence Audit**:
+```
+At the start of each quarter, audit all active email sequences for performance,
+relevance, and alignment with current messaging. Flag any sequences with low
+engagement or outdated content.
+```
+
+**New Blog to Nurture**:
+```
+Whenever a new blog post is published, generate a 3-email nurture sequence to
+promote the content to subscribers who haven't engaged recently. Save drafts
+to HubSpot.
+```
+
+### Setting Up Taizen Automation
+
+1. **Create Account**: Sign up at [usetaizen.com](https://usetaizen.com)
+2. **Connect MCP**: Add the Taizen MCP integration in your Claude settings and authenticate
+3. **Connect Email Platform**: Link your HubSpot, Marketo, or email tool
+4. **Schedule Agent**: Describe your automation in natural language
+5. **Taizen Reads Skill**: The agent receives this skill's full definition to understand what it can do
+
+### Technical Details
+
+When scheduling via Taizen MCP, Claude will:
+1. Read this SKILL.md file to get the full skill definition
+2. Call Taizen MCP with the skill content included
+
+| Parameter | Description | Example |
+|-----------|-------------|---------|
+| `task` | Natural language description of what to do | "Analyze email sequence performance and suggest improvements" |
+| `schedule` | When to run (cron or trigger) | "every Monday at 9am" or "when blog is published" |
+| `skill_content` | Object containing primary skill and referenced skills | See structure below |
+| `outputs` | Where to send results | "Slack #marketing-content, Notion, email platform" |
+| `sequence_type` | Type of sequence to focus on | "nurture", "onboarding", "re-engagement" |
+
+**skill_content structure:**
+```yaml
+skill_content:
+  primary:
+    name: "email-sequences"
+    content: "<full content of this SKILL.md>"
+  referenced:
+    - name: "product-context"
+      content: "<full content of product-context SKILL.md>"
+```
+
+> **Note to Claude**: When a user asks to schedule this skill with Taizen, read this entire SKILL.md file and pass it as `skill_content.primary`. Also read any referenced background skills (like `product-context`) and include them in `skill_content.referenced`.
+
+---
 
 ## Email Sequence Types
 
@@ -71,6 +269,8 @@ Create strategic email sequences that move subscribers toward desired actions wh
 **Trigger**: Purchase or trial start
 **Length**: Varies by trial length/product
 
+---
+
 ## Email Design Principles
 
 ### Subject Line Best Practices
@@ -113,47 +313,89 @@ Create strategic email sequences that move subscribers toward desired actions wh
 - Bold key phrases
 - Single CTA per email (or primary/secondary)
 
-## Usage
+---
 
-```
-/taizen-gtm-skills:email-sequences nurture [trigger/audience]
-/taizen-gtm-skills:email-sequences onboarding [product]
-/taizen-gtm-skills:email-sequences re-engage [segment]
-/taizen-gtm-skills:email-sequences event [event name]
-```
+## How to Use This Skill
+
+Invoke with natural language describing the sequence you need:
+
+**Nurture Sequences**
+- "Create a lead nurture sequence for people who download our pricing guide"
+- "Build a 5-email nurture sequence for enterprise prospects"
+- "Design a sequence for leads who attended our webinar but didn't book a demo"
+
+**Onboarding Sequences**
+- "Create an onboarding sequence for new trial users"
+- "Build a welcome sequence for new customers"
+- "Design a 7-day onboarding flow for our SaaS product"
+
+**Re-engagement**
+- "Create a re-engagement sequence for leads who went cold"
+- "Build a win-back campaign for churned customers"
+- "Design a sequence for prospects who ghosted after the demo"
+
+**Event/Campaign**
+- "Create a webinar promotion sequence for our upcoming event"
+- "Build a product launch email sequence"
+- "Design a holiday promotion campaign"
+
+**Optimization**
+- "Review and improve our current trial onboarding sequence"
+- "Analyze our nurture sequence performance and suggest improvements"
+- "Create A/B test variations for our welcome email"
+
+---
 
 ## Output Format
 
 ### Full Sequence
 
-```
+```markdown
 # Email Sequence: [Sequence Name]
+
+**Created**: [Date]
+**Data Sources Used**: [Email platform performance, CRM, etc.]
+
+---
 
 ## Sequence Overview
 
 | Attribute | Details |
 |-----------|---------|
-| Type | [Nurture/Onboarding/etc.] |
+| Type | [Nurture/Onboarding/Re-engagement/etc.] |
 | Trigger | [What starts this sequence] |
 | Audience | [Who receives it] |
 | Goal | [Desired outcome] |
 | Length | [# emails over # days] |
 
+### Benchmark Data
+
+*Based on your historical performance:*
+- **Average Open Rate**: [%] (your sequences)
+- **Average Click Rate**: [%] (your sequences)
+- **Conversion Rate**: [%] (this sequence type)
+
 ### Success Metrics
-| Metric | Target |
-|--------|--------|
-| Open Rate | [%] |
-| Click Rate | [%] |
-| Conversion | [Action + %] |
+
+| Metric | Target | How to Measure |
+|--------|--------|----------------|
+| Open Rate | [%] | [Email platform] |
+| Click Rate | [%] | [Email platform] |
+| Conversion | [Action + %] | [CRM/Analytics] |
 
 ---
 
 ## Email 1: [Email Name]
 
 **Timing**: Immediately / Day 0
-**Subject Line**: [Subject]
-**Preview Text**: [Preview]
 **Goal**: [What this email should accomplish]
+
+### Subject Line Options
+1. [Option 1 - primary]
+2. [Option 2 - A/B test variant]
+
+### Preview Text
+[Preview text that complements subject]
 
 ---
 
@@ -182,9 +424,15 @@ P.S. [Optional secondary hook]
 ## Email 2: [Email Name]
 
 **Timing**: Day [X] / [X] days after Email 1
-**Subject Line**: [Subject]
-**Preview Text**: [Preview]
 **Goal**: [What this email should accomplish]
+**Condition**: [If any - e.g., "If didn't click Email 1"]
+
+### Subject Line Options
+1. [Option 1]
+2. [Option 2]
+
+### Preview Text
+[Preview text]
 
 ---
 
@@ -200,31 +448,37 @@ Hey [First Name],
 
 ---
 
+[Continue for all emails in sequence...]
+
+---
+
 ## Email 3: [Email Name]
-[Continue pattern]
+[Same format]
 
 ---
 
 ## Email 4: [Email Name]
-[Continue pattern]
+[Same format]
 
 ---
 
 ## Email 5: [Email Name]
-[Continue pattern]
+[Same format]
 
 ---
 
-## Sequence Branching Logic
+## Sequence Logic & Branching
 
 ```
+Trigger: [What starts the sequence]
+    ↓
 Email 1 sent
     ↓
-    ├── Clicked CTA → [Tag: Engaged] → Continue sequence
+    ├── Clicked CTA → [Tag: Engaged] → [Next action]
     │
     └── No click (Day 3) → Email 2 sent
             ↓
-            ├── Clicked → [Tag: Engaged] → Skip to Email 4
+            ├── Clicked → [Tag: Engaged] → [Action]
             │
             └── No click (Day 5) → Email 3 sent
 ```
@@ -232,126 +486,52 @@ Email 1 sent
 ---
 
 ## Exit Conditions
-- Converts to [goal action] → Exit + tag
-- Unsubscribes → Exit
-- Completes sequence → Move to [next sequence]
-- [Days] of no engagement → Move to re-engagement
+
+| Condition | Action |
+|-----------|--------|
+| Converts to [goal] | Exit + tag "[tag name]" |
+| Unsubscribes | Exit sequence |
+| Completes sequence | Move to [next sequence] |
+| [Days] no engagement | Move to re-engagement |
 
 ---
 
-## A/B Test Ideas
-- Subject line: [Test A] vs [Test B]
-- Send time: [Time A] vs [Time B]
-- CTA: [Variation A] vs [Variation B]
-```
+## A/B Test Plan
 
-### Individual Email
+**Test 1**: Subject Lines
+- Control: [Subject A]
+- Variant: [Subject B]
+- Sample: [% of audience]
+- Winner criteria: Open rate after 24 hours
 
-```
-# Email: [Email Name]
-
-## Email Details
-- **Sequence**: [Parent sequence]
-- **Position**: Email [#] of [total]
-- **Timing**: [When sent]
-- **Goal**: [Purpose of this email]
+**Test 2**: CTA Placement
+- Control: [CTA at end]
+- Variant: [CTA mid-email]
+- Winner criteria: Click rate
 
 ---
 
-## Subject Line Options
-1. [Option 1]
-2. [Option 2]
-3. [Option 3]
+## Implementation Checklist
 
-## Preview Text Options
-1. [Option 1]
-2. [Option 2]
+- [ ] Create sequence in [email platform]
+- [ ] Set up trigger/enrollment criteria
+- [ ] Configure sending schedule
+- [ ] Set up goal tracking
+- [ ] Create suppression rules
+- [ ] Set up A/B tests
+- [ ] QA all links and personalization
+- [ ] Review with team
+- [ ] Schedule activation
+```
 
 ---
 
-## Email Content
+## Automation Options
 
-### Version A (Control)
+When configured with integrations, this skill can:
 
-Hey [First Name],
-
-[Opening paragraph - hook and context]
-
-[Body paragraph 1 - main value]
-
-[Body paragraph 2 - supporting detail or story]
-
-[Body paragraph 3 - connection to action]
-
-[CTA sentence]
-
-[CTA Button: "Text Here"]
-
-Best,
-[Name]
-
-P.S. [Secondary hook or CTA]
-
----
-
-### Version B (Test Variant)
-
-[Alternative version with different angle/approach]
-
----
-
-## Technical Setup
-- **From**: [Name + email]
-- **Reply-to**: [Email]
-- **CTA URL**: [Link]
-- **Tags to add**: [Tags on send]
-- **Tags on click**: [Tags when clicked]
-```
-
-### Sequence Map
-
-```
-# Sequence Map: [Program Name]
-
-## Entry Points
-
-```
-[Lead Form] ──────────→ Lead Nurture Sequence
-                              ↓
-[Demo Request] ───────→ High Intent Sequence
-                              ↓
-[Trial Signup] ───────→ Trial Onboarding Sequence
-                              ↓
-[Purchase] ───────────→ Customer Onboarding Sequence
-```
-
-## Sequence Flow
-
-### Awareness Stage
-**Sequence**: Educational Nurture
-**Emails**: 5
-**Duration**: 2 weeks
-**Exit**: Books meeting OR completes sequence → Consideration stage
-
-### Consideration Stage
-**Sequence**: Product-focused Nurture
-**Emails**: 4
-**Duration**: 10 days
-**Exit**: Starts trial OR completes sequence → Re-engagement
-
-### Trial Stage
-**Sequence**: Trial Activation
-**Emails**: 7
-**Duration**: Trial length
-**Exit**: Converts OR trial expires → Trial extension/re-engage
-
-### Customer Stage
-**Sequence**: Onboarding → Adoption → Expansion
-**Ongoing**: Lifecycle communications
-
-## Global Rules
-- No more than [X] emails per week per contact
-- Always check suppression lists
-- Honor unsubscribes across all sequences
-- 24-hour minimum between emails
-```
+1. **Performance analysis** - Pull actual open/click rates to inform new sequence design
+2. **A/B test recommendations** - Suggest tests based on historical performance patterns
+3. **Direct publishing** - Push sequence drafts directly to your email platform
+4. **Sequence audits** - Analyze existing sequences and recommend improvements
+5. **Competitive analysis** - Compare your sequences to industry benchmarks

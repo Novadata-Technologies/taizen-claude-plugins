@@ -1,4 +1,5 @@
 ---
+name: pricing-packaging
 description: Recommends pricing models, tier structures, value metrics, and pricing page guidance. Use for pricing strategy or packaging decisions.
 ---
 
@@ -9,6 +10,169 @@ Strategic pricing and packaging decisions that maximize value capture.
 ## Purpose
 
 Develop pricing strategies and package structures that align with customer value while optimizing revenue.
+
+---
+
+## Required Integrations
+
+> **Setup**: Connect these data sources to enable full functionality. Claude will prompt you to connect any missing integrations when you use this skill.
+
+### Data Sources
+
+```yaml
+# PRICING & PACKAGING DATA SOURCES
+# Configure the sources relevant to your pricing decisions
+
+# Enterprise Search (searches across all internal sources)
+- source: enterprise_search
+  connector: "{{GLEAN | MOVEWORKS | ELASTIC}}"
+  data:
+    - internal_docs
+    - wiki_content
+    - shared_drives
+
+# Competitive Pricing
+- source: competitive_intel
+  connector: "{{KLUE | CRAYON | KOMPYTE}}"
+  data:
+    - competitor_pricing
+    - pricing_changes
+    - packaging_models
+
+# CRM Deal Data
+- source: crm
+  connector: "{{SALESFORCE | HUBSPOT}}"
+  data:
+    - deal_pricing
+    - discount_patterns
+    - win_rates_by_price
+    - deal_size_distribution
+
+# Finance Data
+- source: finance
+  connector: "{{GOOGLE_DRIVE | SHAREPOINT | NETSUITE}}"
+  paths:
+    - "/Finance/Pricing Models/"
+    - "/Finance/Cost Analysis/"
+    - "/Revenue Operations/Pricing/"
+
+# Customer Research
+- source: customer_research
+  connector: "{{GOOGLE_DRIVE | SHAREPOINT | NOTION}}"
+  paths:
+    - "/Research/Pricing Research/"
+    - "/Research/Willingness to Pay/"
+    - "/Research/Value Studies/"
+
+# Product Usage
+- source: product_analytics
+  connector: "{{MIXPANEL | AMPLITUDE | PENDO}}"
+  data:
+    - feature_usage
+    - value_metrics
+    - tier_utilization
+```
+
+### Output Destinations
+
+```yaml
+# Where to deliver pricing outputs
+outputs:
+  # Always available - display in Claude UI
+  - type: display
+    enabled: true
+
+  # Save to pricing docs
+  - type: documents
+    connector: "{{GOOGLE_DRIVE | SHAREPOINT | NOTION}}"
+    destination: "/Revenue Operations/Pricing/"
+
+  # Notify for review
+  - type: slack
+    connector: "{{SLACK}}"
+    channel: "#pricing-committee"
+```
+
+---
+
+## Scheduling & Automation with Taizen
+
+> **Automate this skill**: Schedule pricing monitoring tasks with [Taizen](https://usetaizen.com). Create a free account to set up automated agents that run on your schedule.
+
+### How It Works
+
+The Taizen MCP server accepts natural language requests to schedule agents. Simply describe what you want to automate:
+
+```
+At the start of each quarter, review our pricing effectiveness including
+win rates by price point, discount patterns, and competitive positioning.
+Share the analysis with #pricing-committee.
+```
+
+Taizen will:
+1. Read this skill's definition to understand the capabilities
+2. Create a recurring agent with your specified schedule
+3. Execute the task and deliver results to your configured destinations
+
+### Example Natural Language Requests
+
+**Quarterly Pricing Review**:
+```
+At the start of each quarter, review pricing effectiveness including win
+rates, discount patterns, and competitive positioning. Save to our Pricing
+Reviews folder and notify #pricing-committee.
+```
+
+**Competitive Pricing Alert**:
+```
+When a competitor changes their pricing, analyze the change and assess
+the impact on our positioning. Alert #pricing-committee immediately.
+```
+
+**Monthly Discount Analysis**:
+```
+On the 1st of each month, analyze discount patterns by segment, rep, and
+deal size to identify optimization opportunities. Share with #sales-leadership.
+```
+
+### Setting Up Taizen Automation
+
+1. **Create Account**: Sign up at [usetaizen.com](https://usetaizen.com)
+2. **Connect MCP**: Add the Taizen MCP integration in your Claude settings and authenticate
+3. **Connect CRM**: Link your Salesforce or HubSpot for deal data
+4. **Schedule Agent**: Describe your automation in natural language
+5. **Taizen Reads Skill**: The agent receives this skill's full definition to understand what it can do
+
+### Technical Details
+
+When scheduling via Taizen MCP, Claude will:
+1. Read this SKILL.md file to get the full skill definition
+2. Call Taizen MCP with the skill content included
+
+| Parameter | Description | Example |
+|-----------|-------------|---------|
+| `task` | Natural language description of what to do | "Review pricing effectiveness and discount patterns" |
+| `schedule` | When to run (cron or trigger) | "quarterly" or "when competitor pricing changes" |
+| `skill_content` | Object containing primary skill and referenced skills | See structure below |
+| `outputs` | Where to send results | "Slack #pricing-committee, Google Drive" |
+| `competitors` | Which competitors to monitor | "Salesforce, HubSpot" |
+
+**skill_content structure:**
+```yaml
+skill_content:
+  primary:
+    name: "pricing-packaging"
+    content: "<full content of this SKILL.md>"
+  referenced:
+    - name: "product-context"
+      content: "<full content of product-context SKILL.md>"
+    - name: "competitive-intelligence"
+      content: "<full content of competitive-intelligence SKILL.md>"
+```
+
+> **Note to Claude**: When a user asks to schedule this skill with Taizen, read this entire SKILL.md file and pass it as `skill_content.primary`. Also read any referenced background skills (like `product-context` and `competitive-intelligence`) and include them in `skill_content.referenced`.
+
+---
 
 ## Pricing Frameworks
 
@@ -75,40 +239,41 @@ The ideal value metric should be:
 - Penetration: Price below market, gain share
 - Value: Lower price, different segment
 
-## Pricing Strategy Development
+---
 
-### Discovery Questions
+## How to Use This Skill
 
-**Customer Value**:
-- What's the $ impact of solving this problem?
-- What are they paying for alternatives?
-- What's their budget for this category?
+Invoke with natural language describing what you need:
 
-**Market Dynamics**:
-- How do competitors price?
-- What are market expectations?
-- Is there price sensitivity in the segment?
+**Pricing Strategy**
+- "Develop a pricing strategy for our new product"
+- "Recommend pricing model for our enterprise tier"
 
-**Business Goals**:
-- Revenue targets?
-- Growth vs. profitability priority?
-- Market positioning strategy?
+**Packaging**
+- "Design tier structure for our SaaS product"
+- "How should we package our add-on features?"
 
-## Usage
+**Competitive Analysis**
+- "Analyze competitor pricing in our market"
+- "How does our pricing compare to alternatives?"
 
-```
-/taizen-gtm-skills:pricing-packaging strategy [product/market]
-/taizen-gtm-skills:pricing-packaging tiers [product]
-/taizen-gtm-skills:pricing-packaging analysis [competitor set]
-/taizen-gtm-skills:pricing-packaging page-review [current pricing page]
-```
+**Pricing Page**
+- "Review our pricing page for best practices"
+- "Suggest improvements to our pricing presentation"
+
+---
 
 ## Output Format
 
 ### Pricing Strategy
 
-```
+```markdown
 # Pricing Strategy: [Product Name]
+
+**Created**: [Date]
+**Data Sources Used**: [Competitive intel, CRM data, etc.]
+
+---
 
 ## Strategic Context
 
@@ -163,7 +328,6 @@ The ideal value metric should be:
   - Everything in Starter, plus:
   - [Feature 3]
   - [Feature 4]
-  - [Higher limits]
 - **Upgrade Trigger**: [When they should upgrade]
 
 #### Enterprise
@@ -172,8 +336,6 @@ The ideal value metric should be:
 - **Includes**:
   - Everything in Professional, plus:
   - [Enterprise features]
-  - [Custom terms]
-  - [Premium support]
 
 ## Pricing Levers
 
@@ -184,43 +346,20 @@ The ideal value metric should be:
 | Multi-year | [%] off | 2-3 year commit |
 | Volume | [%] off | [Threshold] |
 
-### Add-ons
-| Add-on | Price | When to Offer |
-|--------|-------|---------------|
-| [Add-on 1] | $[Price] | [Criteria] |
-| [Add-on 2] | $[Price] | [Criteria] |
-
 ## Competitive Positioning
 
 | vs. [Competitor] | Their Price | Our Price | Our Position |
 |------------------|-------------|-----------|--------------|
 | Entry | $[X] | $[X] | [Rationale] |
-| Mid | $[X] | $[X] | [Rationale] |
-| Enterprise | $[X] | $[X] | [Rationale] |
-
-## Implementation Roadmap
-
-### Pricing Page Requirements
-- [Requirement 1]
-- [Requirement 2]
-- [Requirement 3]
-
-### Sales Enablement
-- Price book and quoting guidelines
-- Discount approval matrix
-- Competitive response playbook
-
-### Metrics to Track
-| Metric | Target | Current |
-|--------|--------|---------|
-| Average Deal Size | $[X] | $[X] |
-| Discount Rate | [%] | [%] |
-| Win Rate at List | [%] | [%] |
-
-## Risks & Mitigations
-
-| Risk | Mitigation |
-|------|------------|
-| [Risk 1] | [Plan] |
-| [Risk 2] | [Plan] |
 ```
+
+---
+
+## Automation Options
+
+When configured with integrations, this skill can:
+
+1. **Competitive monitoring** - Alert on competitor pricing changes
+2. **Win rate analysis** - Correlate pricing with deal outcomes
+3. **Discount optimization** - Identify discount patterns to improve
+4. **Tier utilization** - Track which tiers customers choose and why

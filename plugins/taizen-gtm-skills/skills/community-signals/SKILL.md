@@ -1,4 +1,5 @@
 ---
+name: community-signals
 description: Monitors and summarizes community feedback, social signals, and customer sentiment. Use for intelligence gathering and trend spotting.
 ---
 
@@ -9,6 +10,180 @@ Capture and analyze signals from customer communities, social media, and review 
 ## Purpose
 
 Synthesize community feedback into actionable intelligence for product, marketing, and sales teams.
+
+---
+
+## Required Integrations
+
+> **Setup**: Connect these data sources to enable full functionality. Claude will prompt you to connect any missing integrations when you use this skill.
+
+### Data Sources
+
+```yaml
+# COMMUNITY SIGNALS DATA SOURCES
+# Configure the sources relevant to your community monitoring
+
+# Enterprise Search (searches across all internal sources)
+- source: enterprise_search
+  connector: "{{GLEAN | MOVEWORKS | ELASTIC}}"
+  data:
+    - internal_docs
+    - wiki_content
+    - slack_history
+
+# Social Listening
+- source: social_listening
+  connector: "{{SPROUT_SOCIAL | HOOTSUITE | BRANDWATCH}}"
+  data:
+    - brand_mentions
+    - competitor_mentions
+    - sentiment_data
+    - influencer_activity
+
+# Review Sites
+- source: review_sites
+  sources:
+    - g2
+    - capterra
+    - trustradius
+    - gartner_peer_insights
+  data:
+    - reviews
+    - ratings
+    - competitive_comparisons
+
+# Community Platforms
+- source: community
+  connector: "{{DISCOURSE | SLACK | DISCORD | CIRCLE}}"
+  data:
+    - discussions
+    - feature_requests
+    - user_feedback
+
+# Support Data
+- source: support
+  connector: "{{ZENDESK | INTERCOM | FRESHDESK}}"
+  data:
+    - ticket_themes
+    - customer_feedback
+    - satisfaction_scores
+
+# NPS/Survey Data
+- source: surveys
+  connector: "{{DELIGHTED | TYPEFORM | SURVEYMONKEY}}"
+  data:
+    - nps_scores
+    - verbatim_responses
+    - satisfaction_trends
+```
+
+### Output Destinations
+
+```yaml
+# Where to deliver community signal outputs
+outputs:
+  # Always available - display in Claude UI
+  - type: display
+    enabled: true
+
+  # Save reports
+  - type: documents
+    connector: "{{GOOGLE_DRIVE | SHAREPOINT | NOTION}}"
+    destination: "/Marketing/Community Intelligence/"
+
+  # Alert channels
+  - type: slack
+    connector: "{{SLACK}}"
+    channels:
+      signals: "#community-signals"
+      competitive: "#competitive-intel"
+      escalations: "#customer-escalations"
+```
+
+---
+
+## Scheduling & Automation with Taizen
+
+> **Automate this skill**: Schedule community monitoring tasks with [Taizen](https://usetaizen.com). Create a free account to set up automated agents that run on your schedule.
+
+### How It Works
+
+The Taizen MCP server accepts natural language requests to schedule agents. Simply describe what you want to automate:
+
+```
+Every morning at 8am, scan community channels, reviews, and social for notable
+signals from the past 24 hours. Alert me on Slack if there are any negative
+sentiment spikes, competitor mentions, or influencer activity.
+```
+
+Taizen will:
+1. Read this skill's definition to understand the capabilities
+2. Create a recurring agent with your specified schedule
+3. Execute the task and deliver results to your configured destinations
+
+### Example Natural Language Requests
+
+**Daily Signal Scan**:
+```
+Every morning at 8am, scan community channels, reviews, and social for notable
+signals from the past 24 hours. Post to #community-signals and alert me if
+there are negative sentiment spikes or competitor mentions.
+```
+
+**Weekly Community Digest**:
+```
+Every Monday at 9am, generate a weekly community signals digest with sentiment
+trends, top themes, and action items. Share with #community-signals.
+```
+
+**New Review Alert**:
+```
+When a new customer review is posted on G2 or Capterra, analyze it and alert
+#reviews if it's negative or mentions a competitor. Include suggested response.
+```
+
+**Monthly Sentiment Report**:
+```
+On the 1st of each month, generate a monthly sentiment analysis with trends,
+competitive intelligence, and strategic recommendations. Share with #marketing.
+```
+
+### Setting Up Taizen Automation
+
+1. **Create Account**: Sign up at [usetaizen.com](https://usetaizen.com)
+2. **Connect MCP**: Add the Taizen MCP integration in your Claude settings and authenticate
+3. **Connect Social Tools**: Link your social listening and review platforms
+4. **Schedule Agent**: Describe your automation in natural language
+5. **Taizen Reads Skill**: The agent receives this skill's full definition to understand what it can do
+
+### Technical Details
+
+When scheduling via Taizen MCP, Claude will:
+1. Read this SKILL.md file to get the full skill definition
+2. Call Taizen MCP with the skill content included
+
+| Parameter | Description | Example |
+|-----------|-------------|---------|
+| `task` | Natural language description of what to do | "Scan for community signals and sentiment trends" |
+| `schedule` | When to run (cron or trigger) | "every morning at 8am" or "when new review posted" |
+| `skill_content` | Object containing primary skill and referenced skills | See structure below |
+| `outputs` | Where to send results | "Slack #community-signals, Notion" |
+| `sources` | Which sources to monitor | "G2, Reddit, Twitter, Slack community" |
+
+**skill_content structure:**
+```yaml
+skill_content:
+  primary:
+    name: "community-signals"
+    content: "<full content of this SKILL.md>"
+  referenced:
+    - name: "product-context"
+      content: "<full content of product-context SKILL.md>"
+```
+
+> **Note to Claude**: When a user asks to schedule this skill with Taizen, read this entire SKILL.md file and pass it as `skill_content.primary`. Also read any referenced background skills (like `product-context`) and include them in `skill_content.referenced`.
+
+---
 
 ## Signal Sources
 
@@ -65,6 +240,8 @@ Synthesize community feedback into actionable intelligence for product, marketin
 - Survey responses
 - Sales call notes
 
+---
+
 ## Analysis Framework
 
 ### Sentiment Categories
@@ -93,21 +270,42 @@ Group signals into themes:
 | **Medium** | Several mentions, specific feedback |
 | **Low** | One-off mentions, low influence |
 
-## Usage
+---
 
-```
-/taizen-gtm-skills:community-signals digest [time period]
-/taizen-gtm-skills:community-signals sentiment [topic]
-/taizen-gtm-skills:community-signals competitive [competitor]
-/taizen-gtm-skills:community-signals trends [industry/topic]
-```
+## How to Use This Skill
+
+Invoke with natural language describing what you need:
+
+**Signal Digest**
+- "Generate this week's community signals digest"
+- "What are people saying about us on G2?"
+- "Summarize Reddit discussions about our category"
+
+**Sentiment Analysis**
+- "Analyze sentiment around our latest feature launch"
+- "What's the sentiment trend over the past month?"
+
+**Competitive Intelligence**
+- "What are people saying about Competitor X?"
+- "How are we being compared to competitors on review sites?"
+
+**Trend Spotting**
+- "What emerging topics are trending in our community?"
+- "Identify new pain points customers are discussing"
+
+---
 
 ## Output Format
 
 ### Weekly Signal Digest
 
-```
+```markdown
 # Community Signals Digest: [Date Range]
+
+**Created**: [Date]
+**Data Sources Used**: [G2, Reddit, Slack community, etc.]
+
+---
 
 ## Executive Summary
 
@@ -138,9 +336,6 @@ Group signals into themes:
 - **Reach**: [Influence/reach]
 - **Action**: [Amplify/Case study/Thank]
 
-**[Signal 2]**
-[Same format]
-
 ### Success Stories
 - [Customer] shared [result] on [platform]
 - [Influencer] recommended us for [use case]
@@ -159,14 +354,10 @@ Group signals into themes:
 - **Action**: [Response/Escalation]
 - **Owner**: [Who handles]
 
-**[Signal 2]**
-[Same format]
-
 ### Themes in Negative Feedback
 | Theme | Volume | Trend | Status |
 |-------|--------|-------|--------|
 | [Theme 1] | [#] | [↑↓→] | [Addressed/In progress/New] |
-| [Theme 2] | [#] | [↑↓→] | [Status] |
 
 ---
 
@@ -177,55 +368,6 @@ Group signals into themes:
 | Competitor | Mentions | Sentiment | Key Signal |
 |------------|----------|-----------|------------|
 | [Comp 1] | [#] | [Pos/Neg] | [Summary] |
-| [Comp 2] | [#] | [Pos/Neg] | [Summary] |
-
-### Competitive Conversations
-- [Summary of notable comparison discussion]
-- [Win/loss signal from community]
-
-### Competitor News
-- [Relevant competitor update]
-- [Impact assessment]
-
----
-
-## Market Trends
-
-### Industry Signals
-
-**[Trend 1]**: [Description]
-- **Sources**: [Where observed]
-- **Relevance**: [Why it matters to us]
-- **Implication**: [What we should do]
-
-**[Trend 2]**: [Description]
-[Same format]
-
-### Emerging Topics
-- [Topic gaining traction]
-- [New pain point being discussed]
-- [Shift in buyer priorities]
-
----
-
-## Review Site Summary
-
-### New Reviews This Period
-
-| Site | New Reviews | Avg Rating | Change |
-|------|-------------|------------|--------|
-| G2 | [#] | [X.X] | [↑↓→] |
-| Capterra | [#] | [X.X] | [↑↓→] |
-| TrustRadius | [#] | [X.X] | [↑↓→] |
-
-### Notable Reviews
-
-**Positive**:
-> "[Quote]" — [Reviewer, Company] on [Site]
-
-**Needs Attention**:
-> "[Quote]" — [Reviewer, Company] on [Site]
-> **Response Status**: [Responded/Pending]
 
 ---
 
@@ -233,69 +375,19 @@ Group signals into themes:
 
 ### Immediate (This Week)
 - [ ] [Action]: [Owner] — [Due]
-- [ ] [Action]: [Owner] — [Due]
 
 ### Short-term (This Month)
 - [ ] [Action]: [Owner]
-- [ ] [Action]: [Owner]
-
-### Strategic (Longer-term)
-- [ ] [Initiative based on signals]
-- [ ] [Product consideration]
+```
 
 ---
 
-## Signal Sources Monitored
+## Automation Options
 
-| Source | Last Checked | Next Check |
-|--------|--------------|------------|
-| [Source 1] | [Date] | [Date] |
-| [Source 2] | [Date] | [Date] |
-```
+When configured with integrations, this skill can:
 
-### Topic Sentiment Analysis
-
-```
-# Sentiment Analysis: [Topic]
-
-## Overview
-- **Topic**: [Topic being analyzed]
-- **Period**: [Date range]
-- **Sources**: [Where signals came from]
-
-## Sentiment Breakdown
-
-| Sentiment | Volume | % of Total | Trend |
-|-----------|--------|------------|-------|
-| Positive | [#] | [%] | [↑↓→] |
-| Neutral | [#] | [%] | [↑↓→] |
-| Negative | [#] | [%] | [↑↓→] |
-
-## Key Themes
-
-### Positive Themes
-1. **[Theme]**: [Description and examples]
-2. **[Theme]**: [Description and examples]
-
-### Negative Themes
-1. **[Theme]**: [Description and examples]
-2. **[Theme]**: [Description and examples]
-
-## Representative Quotes
-
-**Most Positive**:
-> "[Quote]" — [Source]
-
-**Most Negative**:
-> "[Quote]" — [Source]
-
-**Most Influential**:
-> "[Quote]" — [Source with high reach]
-
-## Recommendations
-
-Based on this sentiment analysis:
-1. [Recommendation 1]
-2. [Recommendation 2]
-3. [Recommendation 3]
-```
+1. **Real-time alerts** - Notify on negative reviews, competitor mentions, or sentiment spikes
+2. **Automated digests** - Generate daily/weekly signal summaries
+3. **Review response** - Draft responses to customer reviews
+4. **Trend tracking** - Monitor sentiment trends over time
+5. **Competitive alerts** - Flag competitive intelligence for battlecard updates

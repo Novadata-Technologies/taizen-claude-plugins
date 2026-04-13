@@ -1,16 +1,225 @@
 ---
-description: Deal reviews, win/loss analysis, and rep coaching frameworks. Helps identify patterns and improve sales execution.
+name: sales-coaching
+description: Deal reviews, win/loss analysis, call coaching, and rep development frameworks. Helps identify patterns and improve sales execution.
 ---
 
 # Sales Coaching Skill
 
-Structured frameworks for deal analysis and rep development.
+Structured frameworks for deal analysis, call coaching, and rep development.
 
 ## Purpose
 
-Enable continuous improvement of sales performance through win/loss analysis, deal retrospectives, and coaching frameworks.
+Enable continuous improvement of sales performance through win/loss analysis, call coaching, deal reviews, and skills development.
 
-## Enablement Modes
+---
+
+## Required Integrations
+
+> **Setup**: Connect these data sources to enable full functionality. Claude will prompt you to connect any missing integrations when you use this skill.
+
+### Data Sources
+
+```yaml
+# SALES COACHING DATA SOURCES
+# Configure the sources relevant to your coaching needs
+
+# Enterprise Search (searches across all internal sources)
+- source: enterprise_search
+  connector: "{{GLEAN | MOVEWORKS | ELASTIC}}"
+  data:
+    - internal_docs
+    - wiki_content
+    - shared_drives
+    - slack_history
+
+# Call Recording & Conversation Intelligence
+- source: call_recordings
+  connector: "{{GONG | CHORUS | CLARI | WINGMAN}}"
+  data:
+    - call_recordings
+    - talk_ratios
+    - question_counts
+    - topic_detection
+    - sentiment_analysis
+    - competitor_mentions
+    - filler_words
+    - next_steps_mentioned
+    - monologue_lengths
+
+# CRM & Deal Data
+- source: crm
+  connector: "{{SALESFORCE | HUBSPOT}}"
+  data:
+    - opportunity_history
+    - stage_progression
+    - win_loss_data
+    - deal_notes
+    - activity_history
+    - pipeline_metrics
+    - quota_attainment
+
+# Sales Engagement
+- source: sales_engagement
+  connector: "{{OUTREACH | SALESLOFT | APOLLO}}"
+  data:
+    - email_metrics
+    - sequence_performance
+    - meeting_booked_rates
+    - reply_rates
+
+# Revenue Intelligence
+- source: revenue_intelligence
+  connector: "{{CLARI | AVISO | BOOSTUP}}"
+  data:
+    - forecast_accuracy
+    - deal_scores
+    - pipeline_health
+    - rep_performance
+
+# Learning Management
+- source: lms
+  connector: "{{LESSONLY | SEISMIC | HIGHSPOT | MINDTICKLE}}"
+  data:
+    - training_completion
+    - certification_status
+    - learning_paths
+
+# Internal Playbooks & Docs
+- source: internal_docs
+  connector: "{{GOOGLE_DRIVE | SHAREPOINT | NOTION | CONFLUENCE}}"
+  paths:
+    - "/Sales/Playbooks/"
+    - "/Sales/Win-Loss Analysis/"
+    - "/Sales Enablement/Training/"
+```
+
+### Output Destinations
+
+```yaml
+# Where to deliver coaching outputs
+outputs:
+  # Always available - display in Claude UI
+  - type: display
+    enabled: true
+
+  # Log coaching notes to CRM
+  - type: crm
+    connector: "{{SALESFORCE | HUBSPOT}}"
+    actions:
+      - add_coaching_notes
+      - update_opportunity_notes
+      - log_win_loss_analysis
+
+  # Share insights with team
+  - type: slack
+    connector: "{{SLACK}}"
+    channels:
+      coaching: "#sales-coaching"
+      wins: "#wins-channel"
+      learnings: "#sales-learnings"
+
+  # Save to enablement library
+  - type: documents
+    connector: "{{GOOGLE_DRIVE | SHAREPOINT | NOTION}}"
+    destination: "/Sales Enablement/Coaching/"
+
+  # Update LMS with identified skill gaps
+  - type: lms
+    connector: "{{LESSONLY | MINDTICKLE}}"
+    actions:
+      - assign_training
+      - track_skill_gaps
+```
+
+---
+
+## Scheduling & Automation with Taizen
+
+> **Automate this skill**: Schedule recurring sales coaching tasks with [Taizen](https://usetaizen.com). Create a free account to set up automated agents that run on your schedule.
+
+### How It Works
+
+The Taizen MCP server accepts natural language requests to schedule agents. Simply describe what you want to automate:
+
+```
+Every Monday morning, generate a performance summary for each rep including
+call metrics from Gong, win/loss patterns, and coaching priorities. Send to
+#sales-management.
+```
+
+Taizen will:
+1. Read this skill's definition to understand the capabilities
+2. Create a recurring agent with your specified schedule
+3. Execute the task and deliver results to your configured destinations
+
+### Example Natural Language Requests
+
+**Weekly Performance Digest**:
+```
+Every Monday at 8am, generate weekly performance summaries for each sales rep
+including call metrics, win/loss analysis, and coaching priorities. Post to
+#sales-management and save to our Coaching folder.
+```
+
+**Automated Call Coaching**:
+```
+Whenever a new call is recorded in Gong, analyze it and send coaching feedback
+to the rep and their manager if the talk ratio exceeds 70% or no next steps
+were set.
+```
+
+**Win/Loss Analysis**:
+```
+When any deal closes (won or lost), automatically generate a comprehensive
+win/loss analysis including call review and lessons learned. Post wins to
+#wins-channel and save all analysis to our Win-Loss Analysis folder.
+```
+
+**Monthly Skills Assessment**:
+```
+On the 1st of each month, run skills assessments for all reps based on their
+call data from the past month. Identify strengths and development areas, and
+notify managers of their team's results.
+```
+
+### Setting Up Taizen Automation
+
+1. **Create Account**: Sign up at [usetaizen.com](https://usetaizen.com)
+2. **Connect MCP**: Add the Taizen MCP integration in your Claude settings and authenticate
+3. **Connect Gong/Chorus**: Link your conversation intelligence platform
+4. **Schedule Agent**: Describe your automation in natural language
+5. **Taizen Reads Skill**: The agent receives this skill's full definition to understand what it can do
+
+### Technical Details
+
+When scheduling via Taizen MCP, Claude will:
+1. Read this SKILL.md file to get the full skill definition
+2. Call Taizen MCP with the skill content included
+
+| Parameter | Description | Example |
+|-----------|-------------|---------|
+| `task` | Natural language description of what to do | "Generate weekly rep performance summaries" |
+| `schedule` | When to run (cron or trigger) | "every Monday at 8am" or "when call is recorded" |
+| `skill_content` | Object containing primary skill and referenced skills | See structure below |
+| `outputs` | Where to send results | "Slack #sales-management, Google Drive" |
+| `team` | Which team/reps to analyze | "Enterprise sales team" |
+
+**skill_content structure:**
+```yaml
+skill_content:
+  primary:
+    name: "sales-coaching"
+    content: "<full content of this SKILL.md>"
+  referenced:
+    - name: "product-context"
+      content: "<full content of product-context SKILL.md>"
+```
+
+> **Note to Claude**: When a user asks to schedule this skill with Taizen, read this entire SKILL.md file and pass it as `skill_content.primary`. Also read any referenced background skills (like `product-context`) and include them in `skill_content.referenced`.
+
+---
+
+## Coaching Modes
 
 ### 1. Win/Loss Analysis Framework
 
@@ -36,7 +245,28 @@ Structured analysis of closed opportunities:
 - How could we have created more urgency?
 - What qualification gaps existed?
 
-### 2. Sales Coaching & Skills Assessment
+### 2. Call Coaching
+
+Review and coach on specific calls:
+
+**Talk Patterns**
+- Talk-to-listen ratio
+- Question frequency and quality
+- Monologue lengths
+- Engagement signals
+
+**Discovery Quality**
+- Depth of questions
+- Pain uncovered
+- Business impact quantified
+- Next steps secured
+
+**Objection Handling**
+- How objections were addressed
+- Missed opportunities to probe
+- Effective responses to replicate
+
+### 3. Skills Assessment
 
 Framework for manager-rep coaching conversations:
 
@@ -49,14 +279,7 @@ Framework for manager-rep coaching conversations:
 - Pipeline management
 - Executive engagement
 
-**Coaching Conversation Structure**
-1. **Observe**: Review recent calls, deals, metrics
-2. **Diagnose**: Identify skill gaps and patterns
-3. **Discuss**: Collaborative conversation about performance
-4. **Plan**: Specific actions for improvement
-5. **Follow-up**: Track progress and reinforce
-
-### 3. Deal Coaching
+### 4. Deal Coaching
 
 Real-time guidance on active opportunities:
 
@@ -66,24 +289,57 @@ Real-time guidance on active opportunities:
 - Risk identification
 - Resource deployment suggestions
 
-## Usage
+---
 
-Specify mode and context in `$ARGUMENTS`:
+## How to Use This Skill
 
-```
-/taizen-gtm-skills:sales-coaching win-analysis [deal details]
-/taizen-gtm-skills:sales-coaching loss-analysis [deal details]
-/taizen-gtm-skills:sales-coaching skill-assessment [rep or skill area]
-/taizen-gtm-skills:sales-coaching deal-review [opportunity details]
-```
+Invoke with natural language describing what you need:
+
+**Win/Loss Analysis**
+- "Analyze the deal we won at Acme Corp - what worked?"
+- "Do a loss analysis on the TechCorp opportunity - why did we lose?"
+- "Review our win/loss data against Competitor X over the last quarter"
+- "What patterns do you see in our lost deals this quarter?"
+
+**Call Coaching**
+- "Coach me on my discovery call with Nike yesterday"
+- "Review Sarah's demo call with Stripe - what feedback should I give her?"
+- "Analyze my last 5 calls - what should I work on?"
+- "What are the common issues you see in our team's discovery calls?"
+
+**Rep Coaching Sessions**
+- "Help me prepare a coaching session for Sarah - focus on discovery skills"
+- "What should I focus on in my 1:1 with Mike? Pull his recent data"
+- "Create a development plan for a new rep struggling with objection handling"
+- "Analyze the team's performance this month - who needs coaching on what?"
+
+**Deal Reviews**
+- "Review my deal strategy for the IBM opportunity"
+- "What are the risks in my current pipeline?"
+- "Help me prepare for our weekly deal review - pull my top 5 deals"
+- "Is the Acme deal qualified? What gaps do we have?"
+
+**Team Analysis**
+- "What skill gaps does our team have based on call data?"
+- "Compare top performers to the rest of the team - what are they doing differently?"
+- "What training should we prioritize for the team?"
+
+---
 
 ## Output Format
 
 ### Win/Loss Analysis
-```
+
+```markdown
 ## Win/Loss Analysis: [Company Name] - [Outcome]
 
+**Analysis Date**: [Date]
+**Data Sources Used**: [CRM, Gong, etc.]
+
+---
+
 ### Deal Overview
+
 | Attribute | Value |
 |-----------|-------|
 | Company | [Name] |
@@ -92,89 +348,223 @@ Specify mode and context in `$ARGUMENTS`:
 | Outcome | [Won/Lost/No Decision] |
 | Close Date | [Date] |
 | Rep | [Name] |
+| Competitors | [Who else was involved] |
 
-### Key Factors
+### Key Factors in [Outcome]
 
-**Primary Reason for [Outcome]**
-[Main factor that determined the outcome]
+**Primary Reason**:
+[Main factor that determined the outcome - from CRM notes and call analysis]
 
-**Contributing Factors**
-1. [Factor 1]: [Details]
-2. [Factor 2]: [Details]
-3. [Factor 3]: [Details]
+**Contributing Factors**:
+1. **[Factor 1]**: [Details with evidence from calls/notes]
+2. **[Factor 2]**: [Details with evidence]
+3. **[Factor 3]**: [Details with evidence]
 
 ### Process Analysis
 
-| Stage | What Happened | What Worked | What Didn't |
-|-------|---------------|-------------|-------------|
-| Discovery | [Details] | [Positives] | [Negatives] |
-| Qualification | [Details] | [Positives] | [Negatives] |
-| Demo/Eval | [Details] | [Positives] | [Negatives] |
-| Proposal | [Details] | [Positives] | [Negatives] |
-| Negotiation | [Details] | [Positives] | [Negatives] |
+*Based on call recordings and CRM activity:*
 
-### Competitive Dynamics
-- **Competitors Involved**: [List]
-- **Our Positioning**: [How we differentiated]
-- **Competitive Outcome**: [Who won and why]
+| Stage | What Happened | What Worked | What Didn't | Call Evidence |
+|-------|---------------|-------------|-------------|---------------|
+| Discovery | [Details] | [Positives] | [Negatives] | [Specific call moments] |
+| Demo | [Details] | [Positives] | [Negatives] | [Specific call moments] |
+| Proposal | [Details] | [Positives] | [Negatives] | [Specific call moments] |
+| Negotiation | [Details] | [Positives] | [Negatives] | [Specific call moments] |
+
+### Conversation Insights
+
+*From Gong/Chorus analysis:*
+- **Total Calls**: [Count]
+- **Average Talk Ratio**: [%]
+- **Key Objections Raised**: [List]
+- **Sentiment Trend**: [How it changed over time]
+- **Competitor Mentions**: [What was said]
 
 ### Stakeholder Analysis
+
 | Stakeholder | Role | Sentiment | Impact on Deal |
 |-------------|------|-----------|----------------|
-| [Name] | [Role] | [+/-/Neutral] | [How they influenced] |
+| [Name] | [Role] | [+/-/Neutral from call sentiment] | [How they influenced] |
 
 ### Lessons Learned
-1. [Lesson 1]: [Actionable takeaway]
-2. [Lesson 2]: [Actionable takeaway]
-3. [Lesson 3]: [Actionable takeaway]
+
+1. **[Lesson 1]**: [Actionable takeaway]
+2. **[Lesson 2]**: [Actionable takeaway]
+3. **[Lesson 3]**: [Actionable takeaway]
 
 ### Recommendations
+
 - **For this account**: [If applicable, next steps]
 - **For similar deals**: [How to apply learnings]
 - **For the team**: [Broader implications]
+
+### Clips to Review
+
+*Key moments from call recordings:*
+- [Call name] @ [Timestamp]: [What happened - good or bad example]
 ```
 
-### Coaching Session
+### Call Coaching
+
+```markdown
+## Call Coaching: [Rep Name] - [Call Type]
+
+**Call**: [Call name/account]
+**Date**: [Date]
+**Duration**: [Length]
+**Data Source**: [Gong/Chorus]
+
+---
+
+### Call Metrics
+
+| Metric | This Call | Rep Average | Team Average |
+|--------|-----------|-------------|--------------|
+| Talk Ratio | [%] | [%] | [%] |
+| Longest Monologue | [seconds] | [seconds] | [seconds] |
+| Questions Asked | [count] | [avg] | [avg] |
+| Filler Words | [count] | [avg] | [avg] |
+| Next Steps Set | [Yes/No] | [%] | [%] |
+
+### What Went Well
+
+1. **[Strength 1]**: [Specific example with timestamp]
+2. **[Strength 2]**: [Specific example with timestamp]
+
+### Areas for Improvement
+
+1. **[Area 1]**:
+   - What happened: [Specific example @ timestamp]
+   - Suggestion: [How to improve]
+   - Example response: "[What to say instead]"
+
+2. **[Area 2]**:
+   - What happened: [Specific example @ timestamp]
+   - Suggestion: [How to improve]
+
+### Discovery Quality Assessment
+
+| Element | Status | Evidence |
+|---------|--------|----------|
+| Uncovered Pain | [✓/✗] | [Quote or lack thereof] |
+| Quantified Impact | [✓/✗] | [Quote or lack thereof] |
+| Identified Decision Maker | [✓/✗] | [Evidence] |
+| Understood Timeline | [✓/✗] | [Evidence] |
+| Clear Next Steps | [✓/✗] | [Evidence] |
+
+### Objection Handling Review
+
+| Objection | How It Was Handled | Better Approach |
+|-----------|-------------------|-----------------|
+| "[Objection]" | [What rep said] | [Improved response] |
+
+### Coaching Conversation Guide
+
+Questions to ask in your 1:1:
+1. "What do you think went well on this call?"
+2. "At [timestamp], the prospect said [X]. How did you interpret that?"
+3. "If you could redo the [section], what would you do differently?"
+4. "What support do you need to improve [skill area]?"
+
+### Recommended Training
+
+- [Specific training module related to identified gaps]
+- [Practice exercise suggestion]
 ```
+
+### Rep Coaching Session
+
+```markdown
 ## Coaching Session: [Rep Name]
 
+**Period**: [Time period reviewed]
+**Manager**: [Your name]
+**Data Sources**: [CRM, Gong, etc.]
+
+---
+
 ### Performance Overview
-- **Period**: [Time period]
-- **Key Metrics**: [Relevant numbers]
-- **Trend**: [Improving/Stable/Declining]
+
+| Metric | Actual | Target | Trend |
+|--------|--------|--------|-------|
+| Quota Attainment | [%] | [%] | [↑/→/↓] |
+| Pipeline Coverage | [X]x | [Target]x | [↑/→/↓] |
+| Win Rate | [%] | [Team avg %] | [↑/→/↓] |
+| Average Deal Size | [$] | [Team avg $] | [↑/→/↓] |
+| Sales Cycle | [days] | [Team avg] | [↑/→/↓] |
 
 ### Skill Assessment
+
+*Based on call recording analysis:*
+
 | Skill Area | Rating | Evidence | Priority |
 |------------|--------|----------|----------|
-| Discovery | [1-5] | [Observations] | [H/M/L] |
-| Value Articulation | [1-5] | [Observations] | [H/M/L] |
-| Objection Handling | [1-5] | [Observations] | [H/M/L] |
-| Closing | [1-5] | [Observations] | [H/M/L] |
-| Account Management | [1-5] | [Observations] | [H/M/L] |
+| Discovery | [1-5] | [From call analysis] | [H/M/L] |
+| Value Articulation | [1-5] | [From call analysis] | [H/M/L] |
+| Objection Handling | [1-5] | [From call analysis] | [H/M/L] |
+| Closing | [1-5] | [From call analysis] | [H/M/L] |
+| Account Management | [1-5] | [From activity data] | [H/M/L] |
+
+### Conversation Quality Trends
+
+*From Gong/Chorus over [time period]:*
+- **Talk Ratio Trend**: [Chart or summary]
+- **Question Frequency**: [Improving/Stable/Declining]
+- **Discovery Depth**: [Assessment]
+- **Objection Handling**: [Assessment]
 
 ### Strengths to Leverage
-1. [Strength 1]: [How to leverage]
-2. [Strength 2]: [How to leverage]
+
+1. **[Strength 1]**: [Evidence] → How to leverage more
+2. **[Strength 2]**: [Evidence] → How to leverage more
 
 ### Development Areas
-1. [Area 1]: [Specific behaviors to change]
-2. [Area 2]: [Specific behaviors to change]
+
+1. **[Area 1]**:
+   - Evidence: [Specific examples from calls]
+   - Impact: [How this affects results]
+   - Development plan: [Specific actions]
+
+2. **[Area 2]**:
+   - Evidence: [Specific examples]
+   - Impact: [How this affects results]
+   - Development plan: [Specific actions]
 
 ### Action Plan
+
 | Action | Timeline | Support Needed | Success Measure |
 |--------|----------|----------------|-----------------|
 | [Action] | [When] | [What help] | [How to measure] |
 
-### Coaching Questions
+### Coaching Questions for 1:1
+
 Use these to guide the conversation:
 1. [Question about self-assessment]
-2. [Question about specific situation]
+2. [Question about specific deal/call]
 3. [Question about goals]
 4. [Question about obstacles]
 5. [Question about commitment]
 
+### Recommended Training
+
+- [ ] [Training module 1] - addresses [skill gap]
+- [ ] [Training module 2] - addresses [skill gap]
+
 ### Follow-Up Plan
+
 - **Next Check-In**: [Date]
 - **Focus Areas**: [What to review]
 - **Metrics to Track**: [What to measure]
 ```
+
+---
+
+## Automation Options
+
+When configured with integrations, this skill can:
+
+1. **Post-call coaching** - Automatically generate coaching feedback after calls
+2. **Win/loss triggers** - Auto-generate analysis when deals close
+3. **Weekly rep digests** - Summarize call metrics and coaching opportunities per rep
+4. **Skill gap detection** - Alert managers when patterns indicate training needs
+5. **Best practice library** - Auto-tag and save great call moments for training

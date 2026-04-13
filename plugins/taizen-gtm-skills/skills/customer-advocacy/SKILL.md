@@ -1,4 +1,5 @@
 ---
+name: customer-advocacy
 description: Manages customer reference programs, testimonial collection, reviews, and advocacy initiatives. Use for building proof points and customer evidence.
 ---
 
@@ -9,6 +10,185 @@ Build and leverage a network of customer advocates for social proof and referenc
 ## Purpose
 
 Transform satisfied customers into active advocates who provide references, reviews, testimonials, and referrals.
+
+---
+
+## Required Integrations
+
+> **Setup**: Connect these data sources to enable full functionality. Claude will prompt you to connect any missing integrations when you use this skill.
+
+### Data Sources
+
+```yaml
+# CUSTOMER ADVOCACY DATA SOURCES
+# Configure the sources relevant to your advocacy program
+
+# Enterprise Search (searches across all internal sources)
+- source: enterprise_search
+  connector: "{{GLEAN | MOVEWORKS | ELASTIC}}"
+  data:
+    - internal_docs
+    - wiki_content
+    - shared_drives
+
+# Customer Success Data
+- source: customer_success
+  connector: "{{GAINSIGHT | CHURNZERO | TOTANGO}}"
+  data:
+    - nps_scores
+    - health_scores
+    - advocacy_status
+    - customer_outcomes
+
+# CRM Data
+- source: crm
+  connector: "{{SALESFORCE | HUBSPOT}}"
+  data:
+    - customer_records
+    - reference_requests
+    - advocacy_activities
+
+# Reference Management
+- source: reference_platform
+  connector: "{{ORCA | SALESFORCE_REFERENCE | POINTNRELEASE}}"
+  data:
+    - active_references
+    - reference_requests
+    - reference_history
+
+# Call Recordings (for quotes)
+- source: call_recordings
+  connector: "{{GONG | CHORUS | CLARI}}"
+  data:
+    - customer_calls
+    - quotable_moments
+
+# Review Sites
+- source: review_sites
+  sources:
+    - g2
+    - capterra
+    - trustradius
+  data:
+    - review_status
+    - ratings
+```
+
+### Output Destinations
+
+```yaml
+# Where to deliver advocacy outputs
+outputs:
+  # Always available - display in Claude UI
+  - type: display
+    enabled: true
+
+  # Save to advocacy program docs
+  - type: documents
+    connector: "{{GOOGLE_DRIVE | SHAREPOINT | NOTION}}"
+    destination: "/Customer Success/Advocacy Program/"
+
+  # Update CRM
+  - type: crm
+    connector: "{{SALESFORCE | HUBSPOT}}"
+    actions:
+      - log_advocacy_activity
+      - update_reference_status
+
+  # Notify team
+  - type: slack
+    connector: "{{SLACK}}"
+    channels:
+      advocacy: "#customer-advocacy"
+      references: "#reference-requests"
+```
+
+---
+
+## Scheduling & Automation with Taizen
+
+> **Automate this skill**: Schedule advocacy program tasks with [Taizen](https://usetaizen.com). Create a free account to set up automated agents that run on your schedule.
+
+### How It Works
+
+The Taizen MCP server accepts natural language requests to schedule agents. Simply describe what you want to automate:
+
+```
+On the 1st of each month, identify new advocacy candidates based on NPS scores,
+health scores, and recent success metrics. Post the list to #customer-advocacy.
+```
+
+Taizen will:
+1. Read this skill's definition to understand the capabilities
+2. Create a recurring agent with your specified schedule
+3. Execute the task and deliver results to your configured destinations
+
+### Example Natural Language Requests
+
+**Monthly Advocate Candidate Scan**:
+```
+On the 1st of each month, identify new advocacy candidates based on NPS scores,
+health scores, and recent success metrics. Post to #customer-advocacy and save
+to our Advocacy Pipeline folder.
+```
+
+**Quarterly Review Request Campaign**:
+```
+At the start of each quarter, generate personalized review request emails for
+customers eligible for G2 and Capterra reviews. Save the email drafts and
+notify #customer-advocacy.
+```
+
+**Reference Request Matcher**:
+```
+When a reference request is created in Salesforce, automatically find the best
+matching references based on industry, use case, and persona. DM the requester
+with the top 3 matches.
+```
+
+**Weekly Reference Activity Report**:
+```
+Every Friday at 9am, summarize reference activity for the week including
+completed calls, feedback received, and reference capacity. Post to
+#customer-advocacy.
+```
+
+### Setting Up Taizen Automation
+
+1. **Create Account**: Sign up at [usetaizen.com](https://usetaizen.com)
+2. **Connect MCP**: Add the Taizen MCP integration in your Claude settings and authenticate
+3. **Connect Customer Success**: Link your Gainsight or ChurnZero
+4. **Schedule Agent**: Describe your automation in natural language
+5. **Taizen Reads Skill**: The agent receives this skill's full definition to understand what it can do
+
+### Technical Details
+
+When scheduling via Taizen MCP, Claude will:
+1. Read this SKILL.md file to get the full skill definition
+2. Call Taizen MCP with the skill content included
+
+| Parameter | Description | Example |
+|-----------|-------------|---------|
+| `task` | Natural language description of what to do | "Identify advocacy candidates from high-NPS customers" |
+| `schedule` | When to run (cron or trigger) | "on the 1st of each month" or "when reference request created" |
+| `skill_content` | Object containing primary skill and referenced skills | See structure below |
+| `outputs` | Where to send results | "Slack #customer-advocacy, Google Drive" |
+| `criteria` | Candidate selection criteria | "NPS 9+, active for 6+ months" |
+
+**skill_content structure:**
+```yaml
+skill_content:
+  primary:
+    name: "customer-advocacy"
+    content: "<full content of this SKILL.md>"
+  referenced:
+    - name: "product-context"
+      content: "<full content of product-context SKILL.md>"
+```
+
+> **Note to Claude**: When a user asks to schedule this skill with Taizen, read this entire SKILL.md file and pass it as `skill_content.primary`. Also read any referenced background skills (like `product-context`) and include them in `skill_content.referenced`.
+
+---
 
 ## Advocacy Program Framework
 
@@ -82,143 +262,41 @@ Transform satisfied customers into active advocates who provide references, revi
 **Quote Formula**:
 "[Specific challenge we faced] → [How product helped] → [Quantified result or emotion]"
 
-## Usage
+---
 
-```
-/taizen-gtm-skills:customer-advocacy program-design
-/taizen-gtm-skills:customer-advocacy testimonial-request [customer]
-/taizen-gtm-skills:customer-advocacy review-request [customer]
-/taizen-gtm-skills:customer-advocacy reference-brief [customer for prospect]
-```
+## How to Use This Skill
+
+Invoke with natural language describing what you need:
+
+**Program Design**
+- "Design a customer advocacy program"
+- "Create advocacy tier structure and benefits"
+
+**Testimonial Requests**
+- "Generate a testimonial request email for Acme Corp"
+- "Create video testimonial script for TechCorp"
+
+**Review Requests**
+- "Write a G2 review request email for our top customers"
+- "Generate personalized review requests for Q4"
+
+**Reference Matching**
+- "Find a reference for a prospect in fintech evaluating for their sales team"
+- "Who are our best references for enterprise HR buyers?"
+
+---
 
 ## Output Format
 
-### Advocacy Program Design
-
-```
-# Customer Advocacy Program: [Company Name]
-
-## Program Overview
-
-### Mission
-[What the advocacy program aims to achieve]
-
-### Goals
-| Goal | Metric | Target |
-|------|--------|--------|
-| Reviews | G2 reviews | [X] per quarter |
-| References | Active references | [X] available |
-| Speaking | Customer speakers | [X] per year |
-| Referrals | Customer referrals | [X] per quarter |
-
-## Tier Structure
-
-### Bronze: Supporters
-**Requirements**:
-- Active customer 3+ months
-- Positive sentiment
-
-**Activities**:
-- [ ] Write a G2/Capterra review
-- [ ] Provide a testimonial quote
-- [ ] Approve logo use
-
-**Benefits**:
-- Recognition in community
-- Early access to features
-- Swag package
-
-### Silver: Champions
-**Requirements**:
-- Bronze activities complete
-- Measurable success story
-- Manager approval to participate
-
-**Activities**:
-- [ ] Participate in reference calls
-- [ ] Complete a case study
-- [ ] Provide video testimonial
-
-**Benefits**:
-- VIP support access
-- Invitation to exclusive events
-- LinkedIn recommendation
-
-### Gold: Ambassadors
-**Requirements**:
-- Silver activities complete
-- Executive sponsorship
-- Strong personal brand
-
-**Activities**:
-- [ ] Speak at company events
-- [ ] Join webinar panels
-- [ ] Contribute guest content
-
-**Benefits**:
-- Advisory board membership
-- Speaking opportunities
-- Executive networking
-
-### Platinum: Partners
-**Requirements**:
-- Gold activities complete
-- Strategic account status
-- Executive relationship
-
-**Activities**:
-- [ ] Provide qualified referrals
-- [ ] Co-marketing campaigns
-- [ ] Product advisory input
-
-**Benefits**:
-- Custom partnership benefits
-- Executive access
-- Joint PR opportunities
-
-## Recruitment Process
-
-### Identification
-1. Review NPS scores monthly
-2. Monitor product usage signals
-3. Track support sentiment
-4. Identify expansion customers
-5. Sales/CS nominations
-
-### Outreach Sequence
-1. **CS Introduction**: Internal discussion
-2. **Soft Ask**: Gauge interest
-3. **Formal Invitation**: Program details
-4. **Onboarding**: Welcome and first activity
-
-## Management & Recognition
-
-### Tracking
-- Advocacy activities logged in [system]
-- Quarterly review of advocate status
-- Annual advocate appreciation
-
-### Recognition
-- Advocate spotlight (newsletter)
-- Annual awards
-- LinkedIn endorsements
-- Executive thank-you notes
-
-## Success Metrics
-
-| Metric | Q1 | Q2 | Q3 | Q4 |
-|--------|----|----|----|----|
-| Active Advocates | | | | |
-| Reviews Generated | | | | |
-| References Completed | | | | |
-| Speaking Events | | | | |
-| Referrals Received | | | | |
-```
-
 ### Testimonial Request
 
-```
+```markdown
 # Testimonial Request: [Customer Name]
+
+**Created**: [Date]
+**Data Sources Used**: [CRM, NPS, Gong, etc.]
+
+---
 
 ## Request Details
 - **Customer**: [Company]
@@ -259,89 +337,22 @@ Best,
 **Option 2 (Results-focused)**:
 "Since implementing [Product], we've seen [specific metric]. The [specific feature] has been a game-changer for our team."
 
-**Option 3 (Experience-focused)**:
-"Working with [Company] has been [positive adjective]. Their team [specific positive experience], and the product [specific benefit]."
-
 ---
 
 ## Approval Process
 - [ ] Customer approves quote text
 - [ ] Customer approves attribution (name, title, company)
 - [ ] Marketing confirms usage rights
-- [ ] Legal review (if needed)
 ```
 
-### Reference Brief
+---
 
-```
-# Reference Brief: [Customer] for [Prospect]
+## Automation Options
 
-## Reference Details
-- **Reference Customer**: [Name, Title, Company]
-- **Prospect**: [Name, Title, Company]
-- **Sales Rep**: [Name]
-- **Scheduled**: [Date/Time]
+When configured with integrations, this skill can:
 
-## Why This Match
-[Why this reference is appropriate for this prospect – similar industry, use case, challenge, etc.]
-
-## Reference Customer Context
-
-### Their Story
-- **Customer Since**: [Date]
-- **Products**: [What they use]
-- **Use Case**: [Primary use case]
-- **Results**: [Key metrics]
-
-### Key Talking Points
-1. [Point the reference can speak to]
-2. [Point the reference can speak to]
-3. [Point the reference can speak to]
-
-### Prep Needed
-- [ ] Brief reference on prospect context
-- [ ] Align on key messages
-- [ ] Confirm availability
-
-## Prospect Context
-
-### Opportunity Details
-- **Deal Size**: [Value]
-- **Stage**: [Current stage]
-- **Timeline**: [Expected close]
-- **Key Concerns**: [What they need to hear]
-
-### What Prospect Wants to Learn
-1. [Question/concern 1]
-2. [Question/concern 2]
-3. [Question/concern 3]
-
-## Reference Prep Email
-
-Hi [Reference Name],
-
-Thank you for agreeing to speak with [Prospect Name] from [Company]! Here's a quick brief:
-
-**About them**: [1-2 sentences on prospect]
-
-**Their situation**: [Brief context on their needs]
-
-**What they want to learn**:
-- [Question 1]
-- [Question 2]
-
-**Helpful if you could mention**:
-- [Specific point or result]
-- [Specific point or result]
-
-The call is scheduled for [date/time]. Please let me know if you have any questions!
-
-Thanks again,
-[Your name]
-
-## Post-Call Follow-Up
-- [ ] Thank reference
-- [ ] Capture feedback
-- [ ] Update prospect
-- [ ] Log activity
-```
+1. **Advocate identification** - Flag high-NPS customers as advocacy candidates
+2. **Automated outreach** - Send personalized review and testimonial requests
+3. **Reference matching** - Find best references for specific prospect needs
+4. **Activity tracking** - Log advocacy activities in CRM
+5. **Capacity management** - Track reference fatigue and availability

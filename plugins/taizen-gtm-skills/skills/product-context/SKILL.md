@@ -1,14 +1,111 @@
 ---
-description: Creates and maintains the foundational product marketing context document. Run this first to establish positioning, audience, messaging, and voice that other skills reference.
+name: product-context
+description: Foundational product marketing context that other skills reference. Establishes positioning, audience, messaging, and voice. Claude auto-references this when running GTM skills.
+user-invocable: false
 ---
 
 # Product Context Skill
 
-Establish the foundational product marketing document that all other skills reference.
+Foundational product marketing context that all GTM skills reference for positioning, messaging, and voice consistency.
 
 ## Purpose
 
-Create a comprehensive product context document that captures your product's positioning, target audience, messaging framework, and brand voice. This becomes the source of truth for all GTM activities.
+Provide the source of truth for product positioning, target audience, messaging framework, and brand voice. Other skills automatically reference this context to ensure consistency across all GTM outputs.
+
+> **Note**: This is a **background reference skill** that Claude auto-loads when other GTM skills need product context. It is not meant to be invoked directly by users. To create or update your product context document, use the `messaging-positioning` or `brand-voice` skills.
+
+---
+
+## Skills That Reference This Context
+
+The following skills automatically use product-context to ensure consistency:
+
+- `copywriting` - Uses messaging framework and brand voice
+- `email-sequences` - Applies value propositions and tone
+- `social-content` - Maintains brand voice across channels
+- `newsletter-writer` - References messaging pillars and voice
+- `seo-content` - Uses positioning and key differentiators
+- `competitive-intelligence` - References positioning against competitors
+- `buyer-profiles` - Aligns persona messaging with framework
+- `discovery-prep` - Uses value props for tailored questions
+- `sales-playbook` - References positioning for talk tracks
+- `outreach-templates` - Applies messaging to prospecting
+- `case-study-builder` - Uses value pillars for storytelling
+- `roi-builder` - References value metrics and proof points
+
+---
+
+## Required Integrations
+
+> **Setup**: Connect these data sources to enable full functionality. Claude will prompt you to connect any missing integrations when you use this skill.
+
+### Data Sources
+
+```yaml
+# PRODUCT CONTEXT DATA SOURCES
+# Configure the sources for your product foundation
+
+# Enterprise Search (searches across all internal sources)
+- source: enterprise_search
+  connector: "{{GLEAN | MOVEWORKS | ELASTIC}}"
+  data:
+    - internal_docs
+    - wiki_content
+    - shared_drives
+
+# Product Documentation
+- source: product_docs
+  connector: "{{GOOGLE_DRIVE | SHAREPOINT | NOTION | CONFLUENCE}}"
+  paths:
+    - "/Product/Documentation/"
+    - "/Product/Roadmap/"
+    - "/Product Marketing/"
+
+# Marketing Foundation
+- source: marketing_docs
+  connector: "{{GOOGLE_DRIVE | SHAREPOINT | NOTION}}"
+  paths:
+    - "/Marketing/Brand Guidelines/"
+    - "/Marketing/Messaging/"
+    - "/Marketing/Positioning/"
+
+# Customer Research
+- source: customer_research
+  connector: "{{GOOGLE_DRIVE | SHAREPOINT | NOTION}}"
+  paths:
+    - "/Research/Persona Research/"
+    - "/Research/ICP Documentation/"
+    - "/Research/Customer Interviews/"
+
+# Competitive Intelligence
+- source: competitive_intel
+  connector: "{{KLUE | CRAYON | KOMPYTE}}"
+  data:
+    - competitor_overview
+    - market_landscape
+```
+
+### Output Destinations
+
+```yaml
+# Where to deliver product context outputs
+outputs:
+  # Always available - display in Claude UI
+  - type: display
+    enabled: true
+
+  # Save as source of truth
+  - type: documents
+    connector: "{{GOOGLE_DRIVE | SHAREPOINT | NOTION}}"
+    destination: "/Product Marketing/Product Context/"
+
+  # Notify on updates
+  - type: slack
+    connector: "{{SLACK}}"
+    channel: "#product-marketing"
+```
+
+---
 
 ## When to Use
 
@@ -88,20 +185,35 @@ For [target customer] who [has this need], [Product] is a [category] that [key b
 - Do: [Style guidelines]
 - Don't: [What to avoid]
 
-## Usage
+---
 
-```
-/taizen-gtm-skills:product-context
-/taizen-gtm-skills:product-context update [specific section]
-```
+## How to Use This Skill
+
+Invoke with natural language describing what you need:
+
+**Initial Setup**
+- "Create a product context document for our company"
+- "Build our product marketing foundation"
+
+**Updates**
+- "Update our product context with the new feature launch"
+- "Refresh our positioning based on competitive changes"
+
+**Specific Sections**
+- "Update the competitor section of our product context"
+- "Add a new buyer persona to our product context"
+
+---
 
 ## Output Format
 
-```
+```markdown
 # Product Marketing Context: [Product Name]
 
-Last Updated: [Date]
-Version: [X.X]
+**Created**: [Date]
+**Data Sources Used**: [Product docs, research, competitive intel]
+**Last Updated**: [Date]
+**Version**: [X.X]
 
 ---
 
@@ -212,3 +324,14 @@ Our product **[statement of primary differentiation]**
 - [Stat 2]
 - [Stat 3]
 ```
+
+---
+
+## Automation Options
+
+When configured with integrations, this skill can:
+
+1. **Context validation** - Check that product context stays current with product changes
+2. **Consistency checking** - Ensure other skills reference the latest product context
+3. **Competitive updates** - Flag when competitive landscape changes
+4. **Onboarding automation** - Share product context with new team members

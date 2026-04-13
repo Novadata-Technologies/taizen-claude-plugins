@@ -1,4 +1,5 @@
 ---
+name: case-study-builder
 description: Creates compelling customer case studies from interviews, data, and research. Use for customer story development, reference programs, or marketing content.
 ---
 
@@ -9,6 +10,180 @@ Create compelling customer success stories that drive credibility and conversion
 ## Purpose
 
 Transform customer wins into persuasive case studies that demonstrate value and build trust with prospects.
+
+---
+
+## Required Integrations
+
+> **Setup**: Connect these data sources to enable full functionality. Claude will prompt you to connect any missing integrations when you use this skill.
+
+### Data Sources
+
+```yaml
+# CASE STUDY BUILDER DATA SOURCES
+# Configure the sources relevant to your customer story development
+
+# Enterprise Search (searches across all internal sources)
+- source: enterprise_search
+  connector: "{{GLEAN | MOVEWORKS | ELASTIC}}"
+  data:
+    - internal_docs
+    - wiki_content
+    - shared_drives
+
+# Customer Success Data
+- source: customer_success
+  connector: "{{GAINSIGHT | CHURNZERO | TOTANGO}}"
+  data:
+    - customer_health
+    - success_metrics
+    - nps_scores
+    - customer_outcomes
+
+# CRM Data
+- source: crm
+  connector: "{{SALESFORCE | HUBSPOT}}"
+  data:
+    - customer_records
+    - deal_history
+    - implementation_details
+    - stakeholder_contacts
+
+# Call Recordings
+- source: call_recordings
+  connector: "{{GONG | CHORUS | CLARI}}"
+  data:
+    - customer_calls
+    - success_conversations
+    - customer_quotes
+
+# Product Usage
+- source: product_analytics
+  connector: "{{MIXPANEL | AMPLITUDE | PENDO}}"
+  data:
+    - feature_adoption
+    - usage_metrics
+    - engagement_scores
+
+# Existing Case Studies
+- source: content_library
+  connector: "{{GOOGLE_DRIVE | SHAREPOINT | NOTION}}"
+  paths:
+    - "/Marketing/Case Studies/"
+    - "/Customer Success/Success Stories/"
+```
+
+### Output Destinations
+
+```yaml
+# Where to deliver case study outputs
+outputs:
+  # Always available - display in Claude UI
+  - type: display
+    enabled: true
+
+  # Save to marketing library
+  - type: documents
+    connector: "{{GOOGLE_DRIVE | SHAREPOINT | NOTION}}"
+    destination: "/Marketing/Case Studies/"
+
+  # Push to CMS
+  - type: cms
+    connector: "{{WORDPRESS | WEBFLOW | CONTENTFUL}}"
+    action: create_draft
+
+  # Notify for review
+  - type: slack
+    connector: "{{SLACK}}"
+    channel: "#customer-marketing"
+```
+
+---
+
+## Scheduling & Automation with Taizen
+
+> **Automate this skill**: Schedule tasks for building case studies with [Taizen](https://usetaizen.com). Create a free account to set up automated agents that run on your schedule.
+
+### How It Works
+
+The Taizen MCP server accepts natural language requests to schedule agents. Simply describe what you want to automate:
+
+```
+On the 1st of each month, identify customers with strong success metrics and
+high NPS scores as case study candidates. Post the list to #customer-marketing.
+```
+
+Taizen will:
+1. Read this skill's definition to understand the capabilities
+2. Create a recurring agent with your specified schedule
+3. Execute the task and deliver results to your configured destinations
+
+### Example Natural Language Requests
+
+**Case Study Candidate Identification**:
+```
+On the 1st of each month, identify customers with strong success metrics and
+high NPS scores as case study candidates. Post the list to #customer-marketing
+and save to our Case Study Pipeline folder.
+```
+
+**Interview Prep Automation**:
+```
+When a case study interview is scheduled, automatically generate interview
+prep including customer background, success metrics, and tailored questions.
+DM the interviewer with the prep materials.
+```
+
+**Draft from Interview Recording**:
+```
+When a customer interview is completed in Gong, automatically generate a
+case study draft from the recording and customer data. Post the draft to
+#customer-marketing for review.
+```
+
+**Quarterly Case Study Review**:
+```
+At the start of each quarter, review existing case studies for outdated
+information and identify which ones need a refresh. Share findings with
+#customer-marketing.
+```
+
+### Setting Up Taizen Automation
+
+1. **Create Account**: Sign up at [usetaizen.com](https://usetaizen.com)
+2. **Connect MCP**: Add the Taizen MCP integration in your Claude settings and authenticate
+3. **Connect Customer Success**: Link your Gainsight or ChurnZero
+4. **Schedule Agent**: Describe your automation in natural language
+5. **Taizen Reads Skill**: The agent receives this skill's full definition to understand what it can do
+
+### Technical Details
+
+When scheduling via Taizen MCP, Claude will:
+1. Read this SKILL.md file to get the full skill definition
+2. Call Taizen MCP with the skill content included
+
+| Parameter | Description | Example |
+|-----------|-------------|---------|
+| `task` | Natural language description of what to do | "Identify case study candidates from top NPS customers" |
+| `schedule` | When to run (cron or trigger) | "on the 1st of each month" or "when interview scheduled" |
+| `skill_content` | Object containing primary skill and referenced skills | See structure below |
+| `outputs` | Where to send results | "Slack #customer-marketing, Google Drive" |
+| `criteria` | Customer selection criteria | "NPS 9+, health score green" |
+
+**skill_content structure:**
+```yaml
+skill_content:
+  primary:
+    name: "case-study-builder"
+    content: "<full content of this SKILL.md>"
+  referenced:
+    - name: "product-context"
+      content: "<full content of product-context SKILL.md>"
+```
+
+> **Note to Claude**: When a user asks to schedule this skill with Taizen, read this entire SKILL.md file and pass it as `skill_content.primary`. Also read any referenced background skills (like `product-context`) and include them in `skill_content.referenced`.
+
+---
 
 ## Case Study Framework
 
@@ -81,21 +256,38 @@ Transform customer wins into persuasive case studies that demonstrate value and 
 - Would you recommend [product]? To whom?
 - What advice would you give others?
 
-## Usage
+---
 
-```
-/taizen-gtm-skills:case-study-builder [customer name]
-/taizen-gtm-skills:case-study-builder interview-prep [customer]
-/taizen-gtm-skills:case-study-builder from-notes [paste interview notes]
-/taizen-gtm-skills:case-study-builder snapshot [customer]
-```
+## How to Use This Skill
+
+Invoke with natural language describing what you need:
+
+**Case Study Creation**
+- "Create a case study for Acme Corp"
+- "Generate a snapshot case study for our website"
+- "Build a video case study script for TechCorp"
+
+**Interview Prep**
+- "Prepare me for the case study interview with Nike tomorrow"
+- "Generate interview questions for a fintech customer story"
+
+**From Notes**
+- "Create a case study from these interview notes: [paste]"
+- "Turn this call transcript into a case study draft"
+
+---
 
 ## Output Format
 
 ### Full Case Study
 
-```
+```markdown
 # [Customer Name]: [Headline That Captures the Win]
+
+**Created**: [Date]
+**Data Sources Used**: [CRM, Gong, Customer Success, etc.]
+
+---
 
 ## At a Glance
 
@@ -185,107 +377,14 @@ Transform customer wins into persuasive case studies that demonstrate value and 
 *Ready to achieve similar results? [CTA]*
 ```
 
-### Interview Prep
-
-```
-# Case Study Interview Prep: [Customer Name]
-
-## Interview Details
-- **Customer**: [Name]
-- **Contact**: [Person, Title]
-- **Date**: [Date/Time]
-- **Duration**: [Expected length]
-
-## Pre-Interview Research
-
-### Company Background
-- [Key facts about the company]
-- [Recent news or developments]
-- [Industry context]
-
-### Relationship Context
-- **Customer Since**: [Date]
-- **Products Used**: [List]
-- **Key Wins**: [Known results]
-- **Champion**: [Key contact]
-
-### Usage Data (if available)
-- [Relevant metrics]
-- [Adoption indicators]
-- [Results data]
-
-## Interview Questions
-
-### Opening (5 min)
-1. Can you tell me about your role at [Company]?
-2. What does your team focus on?
-
-### Challenge (10 min)
-3. Take me back to before [product]. What was the situation?
-4. What challenges were you facing?
-5. What was the impact of those challenges?
-6. What had you tried before?
-
-### Solution (10 min)
-7. What made you look for a new solution?
-8. How did you find [company]?
-9. What stood out during your evaluation?
-10. How was the implementation experience?
-
-### Results (10 min)
-11. What results have you achieved?
-12. Can you share specific numbers?
-13. What's changed for your team?
-14. What surprised you?
-
-### Close (5 min)
-15. What's next for you and [product]?
-16. What advice would you give others?
-17. Is there anything else you'd like to share?
-
-## Key Quotes to Capture
-- Challenge/pain point quote
-- Solution/decision quote
-- Results/impact quote
-- Recommendation quote
-
-## Follow-Up Items
-- [ ] Request permission for logo use
-- [ ] Request headshot
-- [ ] Confirm quote approval process
-- [ ] Schedule any follow-up calls
-```
-
-### Snapshot (One-Pager)
-
-```
-# [Customer Logo] Customer Success: [Company Name]
-
-**[Headline: XX% improvement in key metric]**
-
 ---
 
-## Quick Facts
-- **Industry**: [Industry]
-- **Company Size**: [Size]
-- **Use Case**: [Primary use case]
+## Automation Options
 
-## The Challenge
-[1-2 sentences about the problem]
+When configured with integrations, this skill can:
 
-## The Solution
-[1-2 sentences about how they use the product]
-
-## The Results
-
-| [Metric 1] | [Metric 2] | [Metric 3] |
-|------------|------------|------------|
-| **[XX%]** improvement | **$[XX]** saved | **[XX] hours** reduced |
-
-> "[Short, powerful quote about the impact]"
-> — **[Name]**, [Title], [Company]
-
----
-
-*[CTA: Learn more / See how you can achieve similar results]*
-```
+1. **Candidate identification** - Flag customers with strong success metrics as case study candidates
+2. **Interview preparation** - Generate tailored interview guides based on customer data
+3. **Draft generation** - Create case study drafts from call recordings
+4. **Refresh alerts** - Identify outdated case studies that need updating
+5. **Distribution** - Push approved case studies to CMS and sales content platforms

@@ -1,14 +1,217 @@
 ---
+name: seo-content
 description: Creates SEO-optimized articles, blog posts, and web content. Use for organic content marketing and search visibility.
 ---
 
 # SEO Content Skill
 
-Create search-optimized content that ranks and converts.
+Create search-optimized content that ranks and converts, informed by keyword data and competitor analysis.
 
 ## Purpose
 
 Develop content that attracts organic traffic while providing genuine value to readers and supporting business goals.
+
+---
+
+## Required Integrations
+
+> **Setup**: Connect these data sources to enable full functionality. Claude will prompt you to connect any missing integrations when you use this skill.
+
+### Data Sources
+
+```yaml
+# SEO CONTENT DATA SOURCES
+# Configure the sources relevant to your SEO content needs
+
+# Keyword & SEO Data
+- source: seo_tools
+  connector: "{{AHREFS | SEMRUSH | MOZ | GOOGLE_SEARCH_CONSOLE}}"
+  data:
+    - keyword_research
+    - search_volume
+    - keyword_difficulty
+    - serp_analysis
+    - competitor_rankings
+    - backlink_data
+    - content_gaps
+    - ranking_positions
+
+# Google Search Console
+- source: google_search_console
+  connector: "{{GOOGLE_SEARCH_CONSOLE}}"
+  data:
+    - current_rankings
+    - impressions
+    - clicks
+    - ctr
+    - position_changes
+
+# Website Analytics
+- source: analytics
+  connector: "{{GOOGLE_ANALYTICS | MIXPANEL | AMPLITUDE}}"
+  data:
+    - organic_traffic
+    - page_performance
+    - conversion_by_page
+    - bounce_rates
+    - time_on_page
+
+# Existing Content
+- source: content_library
+  connector: "{{GOOGLE_DRIVE | SHAREPOINT | NOTION | CMS}}"
+  paths:
+    - "/Marketing/Blog Posts/"
+    - "/Marketing/Pillar Content/"
+- source: website
+  url: "{{YOUR_WEBSITE_URL}}"
+  data:
+    - existing_pages
+    - internal_linking
+
+# Brand & Product
+- source: brand_docs
+  connector: "{{GOOGLE_DRIVE | SHAREPOINT | NOTION}}"
+  paths:
+    - "/Marketing/Brand Guidelines/"
+    - "/Marketing/Messaging/"
+- source: product_docs
+  connector: "{{GOOGLE_DRIVE | SHAREPOINT | NOTION | CONFLUENCE}}"
+  paths:
+    - "/Product/Features/"
+    - "/Product/Use Cases/"
+
+# Customer Research
+- source: customer_research
+  connector: "{{GOOGLE_DRIVE | SHAREPOINT | NOTION}}"
+  paths:
+    - "/Research/Customer Questions/"
+    - "/Research/Support FAQs/"
+    - "/Research/Sales FAQs/"
+
+# Competitor Content
+- source: competitor_analysis
+  connector: "{{AHREFS | SEMRUSH}}"
+  data:
+    - competitor_top_pages
+    - content_gaps
+    - keyword_opportunities
+```
+
+### Output Destinations
+
+```yaml
+# Where to deliver SEO content outputs
+outputs:
+  # Always available - display in Claude UI
+  - type: display
+    enabled: true
+
+  # Push to CMS
+  - type: cms
+    connector: "{{WORDPRESS | WEBFLOW | CONTENTFUL | HUBSPOT_CMS}}"
+    actions:
+      - create_draft
+      - update_meta_tags
+
+  # Save to content library
+  - type: documents
+    connector: "{{GOOGLE_DRIVE | SHAREPOINT | NOTION}}"
+    destination: "/Marketing/SEO Content/"
+
+  # Notify for review
+  - type: slack
+    connector: "{{SLACK}}"
+    channel: "#content-review"
+```
+
+---
+
+## Scheduling & Automation with Taizen
+
+> **Automate this skill**: Schedule recurring SEO content tasks with [Taizen](https://usetaizen.com). Create a free account to set up automated agents that run on your schedule.
+
+### How It Works
+
+The Taizen MCP server accepts natural language requests to schedule agents. Simply describe what you want to automate:
+
+```
+Every Monday morning, generate a weekly SEO performance report including
+ranking changes, traffic trends, and content opportunities. Post to
+#seo-content on Slack.
+```
+
+Taizen will:
+1. Read this skill's definition to understand the capabilities
+2. Create a recurring agent with your specified schedule
+3. Execute the task and deliver results to your configured destinations
+
+### Example Natural Language Requests
+
+**Weekly Ranking Report**:
+```
+Every Monday at 9am, generate a weekly SEO performance report including
+ranking changes, traffic trends, and content opportunities. Post findings
+to #seo-content and save to our SEO folder.
+```
+
+**Monthly Content Gap Analysis**:
+```
+On the 1st of each month, identify content gaps by analyzing competitor
+rankings and keyword opportunities we're missing. Share with #content-strategy.
+```
+
+**Content Refresh Alerts**:
+```
+Every morning, check for articles older than 12 months with declining traffic
+that need a content refresh. Alert me on Slack if any articles have dropped
+more than 30% in traffic or fallen 5+ positions.
+```
+
+**Quarterly Content Audit**:
+```
+At the start of each quarter, run a comprehensive content audit including
+performance analysis, consolidation opportunities, and strategic recommendations.
+Save to our Content Audits folder.
+```
+
+### Setting Up Taizen Automation
+
+1. **Create Account**: Sign up at [usetaizen.com](https://usetaizen.com)
+2. **Connect MCP**: Add the Taizen MCP integration in your Claude settings and authenticate
+3. **Connect SEO Tools**: Link your Ahrefs, SEMrush, or Search Console
+4. **Schedule Agent**: Describe your automation in natural language
+5. **Taizen Reads Skill**: The agent receives this skill's full definition to understand what it can do
+
+### Technical Details
+
+When scheduling via Taizen MCP, Claude will:
+1. Read this SKILL.md file to get the full skill definition
+2. Call Taizen MCP with the skill content included
+
+| Parameter | Description | Example |
+|-----------|-------------|---------|
+| `task` | Natural language description of what to do | "Generate weekly SEO ranking report" |
+| `schedule` | When to run (cron or trigger) | "every Monday at 9am" or "when keyword approved" |
+| `skill_content` | Object containing primary skill and referenced skills | See structure below |
+| `outputs` | Where to send results | "Slack #seo-content, Notion" |
+| `keywords` | Keywords to focus on | "target keywords for Q2" |
+
+**skill_content structure:**
+```yaml
+skill_content:
+  primary:
+    name: "seo-content"
+    content: "<full content of this SKILL.md>"
+  referenced:
+    - name: "product-context"
+      content: "<full content of product-context SKILL.md>"
+    - name: "brand-voice"
+      content: "<full content of brand-voice SKILL.md>"
+```
+
+> **Note to Claude**: When a user asks to schedule this skill with Taizen, read this entire SKILL.md file and pass it as `skill_content.primary`. Also read any referenced background skills (like `product-context` and `brand-voice`) and include them in `skill_content.referenced`.
+
+---
 
 ## SEO Content Framework
 
@@ -64,11 +267,6 @@ Conclusion + CTA
 - [ ] Clear value proposition
 - [ ] Call to action
 
-**URL**:
-- [ ] Short and descriptive
-- [ ] Includes primary keyword
-- [ ] Hyphenated words
-
 **Content**:
 - [ ] Keyword in first 100 words
 - [ ] Keywords in H2s naturally
@@ -87,12 +285,7 @@ Conclusion + CTA
 - Accurate, up-to-date information
 - Clear, professional presentation
 
-**User Experience**:
-- Fast loading
-- Mobile-friendly
-- Easy to scan
-- Engaging media
-- Clear next steps
+---
 
 ## Content Types
 
@@ -114,101 +307,135 @@ Numbered list of tips, tools, examples
 ### Glossary / Definition
 "What is [term]" educational content
 
-## Usage
+---
 
-```
-/taizen-gtm-skills:seo-content brief [keyword/topic]
-/taizen-gtm-skills:seo-content article [keyword/topic]
-/taizen-gtm-skills:seo-content optimize [paste content]
-/taizen-gtm-skills:seo-content meta [title/URL]
-```
+## How to Use This Skill
+
+Invoke with natural language describing what SEO content you need:
+
+**Content Briefs**
+- "Create an SEO content brief for 'how to improve sales productivity'"
+- "Build a brief for a pillar page on customer success"
+- "Research and outline an article targeting 'best CRM for small business'"
+
+**Full Articles**
+- "Write an SEO-optimized blog post on email marketing best practices"
+- "Create a comparison article: HubSpot vs Salesforce"
+- "Write a how-to guide for setting up marketing automation"
+
+**Optimization**
+- "Optimize this existing article for SEO: [paste or link]"
+- "Improve the meta tags for our pricing page"
+- "Add FAQ schema markup suggestions for this content"
+
+**Content Strategy**
+- "What content gaps exist between us and [competitor]?"
+- "Identify keyword opportunities for our product category"
+- "Plan a content cluster around [topic]"
+
+---
 
 ## Output Format
 
 ### Content Brief
 
-```
+```markdown
 # SEO Content Brief: [Primary Keyword]
+
+**Created**: [Date]
+**Data Sources Used**: [Ahrefs, Search Console, etc.]
+
+---
 
 ## Target Keywords
 
-| Keyword | Volume | Difficulty | Intent |
-|---------|--------|------------|--------|
-| [Primary] | [Vol] | [KD] | [Intent] |
-| [Secondary 1] | [Vol] | [KD] | [Intent] |
-| [Secondary 2] | [Vol] | [KD] | [Intent] |
+| Keyword | Volume | Difficulty | Intent | Priority |
+|---------|--------|------------|--------|----------|
+| [Primary] | [Vol] | [KD] | [Intent] | Primary |
+| [Secondary 1] | [Vol] | [KD] | [Intent] | Secondary |
+| [Secondary 2] | [Vol] | [KD] | [Intent] | Secondary |
 
 ### Related Keywords to Include
+*For semantic coverage:*
 - [Keyword 1]
 - [Keyword 2]
 - [Keyword 3]
 - [Keyword 4]
+
+### Questions from "People Also Ask"
+1. [Question 1]
+2. [Question 2]
+3. [Question 3]
 
 ---
 
 ## Search Intent Analysis
 
 **What searchers want**:
-- [Primary need]
-- [Secondary need]
-- [Questions they have]
+- Primary need: [What they're trying to accomplish]
+- Secondary needs: [Related information they need]
+- Questions they have: [Specific questions]
 
-**Content type that ranks**:
-- [Type 1]: [Example from SERPs]
-- [Type 2]: [Example from SERPs]
+**Content type that ranks** (from SERP analysis):
+- Position 1: [Type] - [URL] - [Word count]
+- Position 2: [Type] - [URL] - [Word count]
+- Position 3: [Type] - [URL] - [Word count]
 
 ---
 
 ## Competitive Analysis
 
 ### Top Ranking Content
-| Position | Title | Word Count | Key Angles |
-|----------|-------|------------|------------|
-| 1 | [Title] | [Count] | [Angles] |
-| 2 | [Title] | [Count] | [Angles] |
-| 3 | [Title] | [Count] | [Angles] |
 
-### Content Gaps
-- [What competitors miss]
-- [Unique angle opportunity]
-- [Data/examples needed]
+| Position | Title | Domain | Word Count | Key Angles |
+|----------|-------|--------|------------|------------|
+| 1 | [Title] | [Domain] | [Count] | [What they cover] |
+| 2 | [Title] | [Domain] | [Count] | [What they cover] |
+| 3 | [Title] | [Domain] | [Count] | [What they cover] |
+
+### Content Gaps (Our Opportunity)
+Based on competitor analysis:
+- [What competitors miss that we can cover]
+- [Unique angle we can take]
+- [Data/examples we have that they don't]
 
 ---
 
-## Content Outline
-
-### Recommended Structure
+## Recommended Structure
 
 **Title**: [SEO-optimized title]
-**Meta Description**: [150-160 chars]
-**Target Word Count**: [Range]
+**Meta Description**: [150-160 chars with keyword and CTA]
+**Target Word Count**: [Range based on competition]
+**Estimated Reading Time**: [Minutes]
+
+### Outline
 
 **H1**: [Title/Primary keyword]
 
 **Introduction** (150-200 words)
-- Hook: [Angle]
+- Hook: [Angle to grab attention]
 - Problem: [What reader faces]
 - Promise: [What they'll learn]
+- Credibility: [Why trust this content]
 
-**H2**: [Section 1 - address primary intent]
+**H2**: [Section 1 - addresses primary search intent]
+- H3: [Subtopic]
+- H3: [Subtopic]
+- *Include: [Specific points to cover]*
+
+**H2**: [Section 2 - goes deeper]
+- H3: [Subtopic]
+- H3: [Subtopic]
+- *Include: [Specific points to cover]*
+
+**H2**: [Section 3 - practical/actionable]
 - H3: [Subtopic]
 - H3: [Subtopic]
 
-**H2**: [Section 2 - go deeper]
-- H3: [Subtopic]
-- H3: [Subtopic]
-
-**H2**: [Section 3 - practical application]
-- H3: [Subtopic]
-- H3: [Subtopic]
-
-**H2**: [Section 4 - additional value]
-- H3: [Subtopic]
-
-**H2**: FAQ
-- H3: [Question from PAA/related searches]
-- H3: [Question from PAA/related searches]
-- H3: [Question from PAA/related searches]
+**H2**: FAQ (for PAA targeting)
+- H3: [Question 1 - exact match from PAA]
+- H3: [Question 2 - exact match from PAA]
+- H3: [Question 3 - exact match from PAA]
 
 **Conclusion**
 - Summary of key points
@@ -216,26 +443,39 @@ Numbered list of tips, tools, examples
 
 ---
 
-## Internal Linking Opportunities
-- Link TO: [Existing content to link to]
-- Link FROM: [Existing content that should link to this]
+## Internal Linking Strategy
+
+**Link TO these existing pages**:
+- [Page 1]: [Anchor text suggestion]
+- [Page 2]: [Anchor text suggestion]
+
+**Update these pages to link TO this new content**:
+- [Existing page 1]
+- [Existing page 2]
+
+---
 
 ## CTA Strategy
-- **Primary CTA**: [Action]
-- **Secondary CTA**: [Action]
+- **Primary CTA**: [Action] - [Where in content]
+- **Secondary CTA**: [Action] - [Where in content]
 
 ## Visual Assets Needed
-- [ ] [Image/graphic 1]
-- [ ] [Image/graphic 2]
-- [ ] [Data visualization]
+- [ ] Featured image
+- [ ] [Diagram/infographic suggestion]
+- [ ] [Screenshot needs]
+
+## Schema Markup
+Recommended: [Article/HowTo/FAQ schema]
 ```
 
-### Full Article
+### Full SEO Article
 
-```
+```markdown
 # [SEO-Optimized Title with Primary Keyword]
 
 **Meta Description**: [150-160 character description with keyword and CTA]
+**Primary Keyword**: [Keyword]
+**Word Count**: [Count]
 
 ---
 
@@ -243,21 +483,30 @@ Numbered list of tips, tools, examples
 - Hook that relates to reader's situation
 - Establish the problem or opportunity
 - Preview what they'll learn
-- Brief credibility builder
+- Brief credibility builder (why trust this)
+
+**In this guide, you'll learn:**
+- [Key point 1]
+- [Key point 2]
+- [Key point 3]
 
 ---
 
 ## [H2: Major Section 1 - Primary Keyword Related]
 
-[Content that directly addresses search intent]
+[Content that directly addresses search intent - include primary keyword naturally]
 
 ### [H3: Subtopic]
-[Detailed content with examples]
+
+[Detailed content with examples, data, and actionable advice]
 
 ### [H3: Subtopic]
-[Detailed content with examples]
+
+[Detailed content]
 
 > **Key Takeaway**: [Boxed callout with important point]
+
+[Internal link: Related content on your site]
 
 ---
 
@@ -266,43 +515,47 @@ Numbered list of tips, tools, examples
 [Content that expands on the topic]
 
 ### [H3: Subtopic]
+
 [Detailed content]
 
-### [H3: Subtopic]
-[Detailed content]
-
-**[Data/Stat callout]**: [Interesting statistic with source]
+**[Data/Stat callout]**: [Interesting statistic with source - external link]
 
 ---
 
-## [H2: Major Section 3 - Practical/Actionable]
+## [H2: Practical/Actionable Section]
 
 [How to apply this information]
 
-### [H3: Step or Tip]
-[Actionable guidance]
+**Step 1: [Action]**
+[Explanation]
 
-### [H3: Step or Tip]
-[Actionable guidance]
+**Step 2: [Action]**
+[Explanation]
+
+**Step 3: [Action]**
+[Explanation]
 
 ---
 
-## [H2: FAQ]
+## Frequently Asked Questions
 
 ### [Question from PAA - exact match]
-[Direct answer to the question, 50-150 words]
+
+[Direct answer to the question, 50-150 words, optimized for featured snippet]
 
 ### [Question from PAA - exact match]
-[Direct answer to the question, 50-150 words]
+
+[Direct answer]
 
 ### [Question from PAA - exact match]
-[Direct answer to the question, 50-150 words]
+
+[Direct answer]
 
 ---
 
 ## Conclusion
 
-[Recap of key points]
+[Recap of key points - 2-3 sentences]
 
 [Reinforcement of main value]
 
@@ -310,43 +563,21 @@ Numbered list of tips, tools, examples
 
 ---
 
-*[Internal links naturally placed throughout]*
-*[External links to authoritative sources]*
+**Related Resources:**
+- [Internal link 1]
+- [Internal link 2]
+- [Internal link 3]
 ```
 
-### Meta Optimization
+---
 
-```
-# Meta Optimization: [Page Title/URL]
+## Automation Options
 
-## Current Meta
-- **Title**: [Current title]
-- **Description**: [Current description]
-- **URL**: [Current URL]
+When configured with integrations, this skill can:
 
-## Optimized Recommendations
-
-### Title Tag Options
-1. [Primary keyword] - [Benefit] | [Brand]
-2. [How to/What is] [Keyword]: [Value prop]
-3. [Number] [Keyword] [Tips/Examples/etc.] for [Year]
-
-**Recommended**: [Best option]
-**Character count**: [Count]/60
-
-### Meta Description Options
-1. [Description with keyword, benefit, and CTA]
-2. [Alternative approach]
-
-**Recommended**: [Best option]
-**Character count**: [Count]/160
-
-### URL Recommendation
-Current: [Current]
-Optimized: /[keyword-slug]/
-
-## Additional Optimization
-- Schema markup: [Recommended type]
-- Featured snippet opportunity: [Yes/No - format]
-- Image optimization: [Alt text suggestion]
-```
+1. **Keyword research** - Pull real search volume and difficulty data from Ahrefs/SEMrush
+2. **SERP analysis** - Analyze what's currently ranking to inform your approach
+3. **Content gap identification** - Find keywords competitors rank for that you don't
+4. **Performance tracking** - Monitor how your content ranks over time
+5. **Internal linking** - Suggest linking opportunities across your site
+6. **CMS publishing** - Push drafts directly to WordPress/Webflow/HubSpot
