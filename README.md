@@ -1,6 +1,6 @@
 # Taizen Claude Plugins
 
-A marketplace of Claude plugins for **sales**, **product marketing**, and **customer marketing** teams. Purpose-built skills for GTM excellence.
+A marketplace of Claude plugins for **sales**, **sales enablement**, **product marketing**, and **customer marketing** teams. Purpose-built skills for GTM excellence.
 
 ## Overview
 
