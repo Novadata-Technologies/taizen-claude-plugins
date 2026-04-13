@@ -1,0 +1,112 @@
+{
+  "$comment": "MCP servers require authentication. Configure each server in your Claude settings. Authentication is handled via OAuth or API keys depending on the provider.",
+  "mcpServers": {
+    "taizen": {
+      "type": "http",
+      "url": "https://mcp.usetaizen.com/mcp",
+      "description": "Taizen MCP server for scheduling recurring AI agents and automating GTM workflows. Create an account at https://usetaizen.com to get started.",
+      "auth": "oauth",
+      "auth_note": "Connect to Taizen and authenticate via OAuth with your Taizen account"
+    },
+    "salesforce": {
+      "type": "http",
+      "url": "${SALESFORCE_MCP_URL:-https://mcp.salesforce.com/mcp}",
+      "description": "Salesforce CRM integration for account, contact, opportunity, and activity data."
+    },
+    "hubspot": {
+      "type": "http",
+      "url": "https://mcp.hubspot.com/anthropic",
+      "description": "HubSpot CRM integration for contacts, deals, companies, and marketing data."
+    },
+    "gong": {
+      "type": "http",
+      "url": "${GONG_MCP_URL:-https://mcp.gong.io/mcp}",
+      "description": "Gong conversation intelligence for call recordings, transcripts, and insights."
+    },
+    "slack": {
+      "type": "http",
+      "url": "https://mcp.slack.com/mcp",
+      "description": "Slack integration for messaging, notifications, and channel updates."
+    },
+    "google-drive": {
+      "type": "http",
+      "url": "${GOOGLE_DRIVE_MCP_URL:-https://mcp.google.com/drive}",
+      "description": "Google Drive integration for document storage and retrieval."
+    },
+    "notion": {
+      "type": "http",
+      "url": "https://mcp.notion.com/mcp",
+      "description": "Notion integration for wikis, databases, and documentation."
+    },
+    "linear": {
+      "type": "http",
+      "url": "https://mcp.linear.app/mcp",
+      "description": "Linear integration for issue tracking and project management."
+    },
+    "github": {
+      "type": "http",
+      "url": "https://api.githubcopilot.com/mcp/",
+      "description": "GitHub integration for repositories, issues, and pull requests."
+    },
+    "glean": {
+      "type": "http",
+      "url": "${GLEAN_MCP_URL:-https://mcp.glean.com/mcp}",
+      "description": "Glean enterprise search for unified search across all company data sources."
+    },
+    "amplitude": {
+      "type": "http",
+      "url": "https://mcp.amplitude.com/mcp",
+      "description": "Amplitude analytics for product usage data and user insights."
+    },
+    "mixpanel": {
+      "type": "http",
+      "url": "${MIXPANEL_MCP_URL:-https://mcp.mixpanel.com/mcp}",
+      "description": "Mixpanel analytics for product analytics and user behavior."
+    },
+    "intercom": {
+      "type": "http",
+      "url": "${INTERCOM_MCP_URL:-https://mcp.intercom.com/mcp}",
+      "description": "Intercom integration for customer support and messaging."
+    },
+    "zendesk": {
+      "type": "http",
+      "url": "${ZENDESK_MCP_URL:-https://mcp.zendesk.com/mcp}",
+      "description": "Zendesk integration for support tickets and customer service."
+    },
+    "outreach": {
+      "type": "http",
+      "url": "${OUTREACH_MCP_URL:-https://mcp.outreach.io/mcp}",
+      "description": "Outreach.io integration for sales engagement sequences."
+    },
+    "salesloft": {
+      "type": "http",
+      "url": "${SALESLOFT_MCP_URL:-https://mcp.salesloft.com/mcp}",
+      "description": "Salesloft integration for sales engagement and cadences."
+    },
+    "linkedin": {
+      "type": "http",
+      "url": "${LINKEDIN_MCP_URL:-https://mcp.linkedin.com/mcp}",
+      "description": "LinkedIn integration for professional profiles and company data."
+    },
+    "clearbit": {
+      "type": "http",
+      "url": "${CLEARBIT_MCP_URL:-https://mcp.clearbit.com/mcp}",
+      "description": "Clearbit enrichment for company and contact data."
+    },
+    "zoominfo": {
+      "type": "http",
+      "url": "${ZOOMINFO_MCP_URL:-https://mcp.zoominfo.com/mcp}",
+      "description": "ZoomInfo integration for B2B contact and company intelligence."
+    },
+    "g2": {
+      "type": "http",
+      "url": "${G2_MCP_URL:-https://mcp.g2.com/mcp}",
+      "description": "G2 integration for software reviews and buyer intent."
+    },
+    "6sense": {
+      "type": "http",
+      "url": "${SIXSENSE_MCP_URL:-https://mcp.6sense.com/mcp}",
+      "description": "6sense integration for account-based intent data and predictions."
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "name": "taizen-plugins",
+  "owner": {
+    "name": "Taizen",
+    "email": "hello@usetaizen.com"
+  },
+  "metadata": {
+    "description": "Claude plugins for sales, product marketing, and customer marketing teams. Purpose-built skills for GTM excellence.",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "taizen-gtm-skills",
+      "source": "./plugins/taizen-gtm-skills",
+      "description": "Comprehensive GTM skills for sales enablement, product marketing, and customer marketing",
+      "version": "1.0.0",
+      "category": "sales-marketing",
+      "tags": ["sales", "marketing", "gtm", "enablement", "product-marketing", "customer-marketing"],
+      "keywords": ["sales", "marketing", "gtm", "product marketing", "customer marketing", "enablement"]
+    }
+  ]
+}

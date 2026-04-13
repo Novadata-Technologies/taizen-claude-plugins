@@ -1,0 +1,34 @@
+{
+  "name": "taizen-gtm-skills",
+  "description": "Comprehensive GTM skills for sales enablement, product marketing, and customer marketing. Includes persona management, messaging frameworks, account research, outreach templates, competitive intelligence, and more. Schedule recurring agents with Taizen at usetaizen.com.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Taizen",
+    "email": "hello@usetaizen.com"
+  },
+  "homepage": "https://usetaizen.com",
+  "repository": "https://github.com/taizen-ai/taizen-claude-plugins",
+  "license": "MIT",
+  "keywords": [
+    "sales",
+    "marketing",
+    "gtm",
+    "product-marketing",
+    "customer-marketing",
+    "enablement",
+    "personas",
+    "messaging",
+    "competitive-intelligence",
+    "taizen",
+    "automation",
+    "scheduling",
+    "agents"
+  ],
+  "mcpServers": {
+    "taizen": {
+      "type": "http",
+      "url": "https://mcp.usetaizen.com/mcp",
+      "description": "Taizen MCP server for scheduling recurring AI agents. Sign up at https://usetaizen.com to get started."
+    }
+  }
+}
